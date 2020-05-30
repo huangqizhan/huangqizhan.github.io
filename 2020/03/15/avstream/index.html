@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="AVFrame AVFrame中存储的是经过解码后的原始数据。在解码中，AVFrame是解码器的输出；在编码中，AVFrame是编码器的输入    123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AVFrame  AVStream AVPacket">
+<meta property="og:url" content="http://yoursite.com/2020/03/15/avstream/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="AVFrame AVFrame中存储的是经过解码后的原始数据。在解码中，AVFrame是解码器的输出；在编码中，AVFrame是编码器的输入    123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676">
+<meta property="article:published_time" content="2020-03-15T08:49:20.000Z">
+<meta property="article:modified_time" content="2020-03-15T08:59:21.684Z">
+<meta property="article:author" content="hqz">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/15/avstream/"/>
+
+
+
+
+
+  <title>AVFrame  AVStream AVPacket | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/15/avstream/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AVFrame  AVStream AVPacket</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-15T16:49:20+08:00">
+                2020-03-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="AVFrame"><a href="#AVFrame" class="headerlink" title="AVFrame"></a>AVFrame</h3><blockquote>
+<p>AVFrame中存储的是经过解码后的原始数据。在解码中，AVFrame是解码器的输出；在编码中，AVFrame是编码器的输入  </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><span class="line"> AVFrame  音视频帧</span><br><span class="line">typedef struct AVFrame &#123;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 通道数， 如果是视频帧 YUV格式或者RGB格式 就会有3个通道  如果是音频帧 通道数&#x3D;&#x3D;声道数 </span><br><span class="line">#define AV_NUM_DATA_POINTERS 8</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 原始数据 yuv&#x2F;pcm</span><br><span class="line">    uint8_t *data[AV_NUM_DATA_POINTERS];</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 见下面的注释 </span><br><span class="line">    int linesize[AV_NUM_DATA_POINTERS];</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 见下面的注释  </span><br><span class="line">    uint8_t **extended_data; </span><br><span class="line">    &#x2F;&#x2F;&#x2F; 视频高 视频宽</span><br><span class="line">    int width, height;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 音频的一个AVFrame中可能包含多个音频帧</span><br><span class="line">    int nb_samples;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 解码后原始数据类型（YUV420，YUV422，RGB24...）</span><br><span class="line">    int format;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 是否是关键帧</span><br><span class="line">    int key_frame;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;帧类型（I,B,P...</span><br><span class="line">    enum AVPictureType pict_type;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 宽高比（16:9，4:3...）</span><br><span class="line">    AVRational sample_aspect_ratio;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 显示时间戳</span><br><span class="line">    int64_t pts;</span><br><span class="line"> </span><br><span class="line"> #if FF_API_PKT_PTS</span><br><span class="line"> </span><br><span class="line">     attribute_deprecated</span><br><span class="line">     int64_t pkt_pts;</span><br><span class="line"> #endif</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 编码时间</span><br><span class="line">     int64_t pkt_dts;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 编码帧序号</span><br><span class="line">     int coded_picture_number;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 帧序号</span><br><span class="line">     int display_picture_number;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 品质(介于1(最好)和FF_LAMBDA_MAX(坏)之间)</span><br><span class="line">     int quality;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 用户私有信息.</span><br><span class="line">     void *opaque;</span><br><span class="line"> </span><br><span class="line"> #if FF_API_ERROR_FRAME</span><br><span class="line"> </span><br><span class="line">     attribute_deprecated</span><br><span class="line">     uint64_t error[AV_NUM_DATA_POINTERS];</span><br><span class="line"> #endif</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 解码时, 每帧图片的延迟时间.</span><br><span class="line">     int repeat_pict;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 是否是隔行扫描</span><br><span class="line">     int interlaced_frame;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 图像的top field first变量. 如果内容是隔行的, 则首先显示顶部字段.</span><br><span class="line">     int top_field_first;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 告诉用户应用程序调色板已从上一帧更改</span><br><span class="line">     int palette_has_changed;</span><br><span class="line"> </span><br><span class="line">     int64_t reordered_opaque;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 采样率</span><br><span class="line">     int sample_rate;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 声道布局  单声道 多声道  每bit代表一个特定的声道.</span><br><span class="line">     uint64_t channel_layout;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 此帧的数据可以由AVBufferRef管理, AVBufferRef提供AVBuffer引用机制.</span><br><span class="line">     AVBufferRef *buf[AV_NUM_DATA_POINTERS];</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 可能buf[]存不下所有的AVBufferRef指针, 多出的AVBufferRef指针存储在extended_buf数组中.</span><br><span class="line">     AVBufferRef **extended_buf;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; extended_buf中元素的数目.</span><br><span class="line">     int        nb_extended_buf;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 边缘数据</span><br><span class="line">     AVFrameSideData **side_data;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 边缘数据数目</span><br><span class="line">     int            nb_side_data;</span><br><span class="line"> </span><br><span class="line"> #define AV_FRAME_FLAG_CORRUPT       (1 &lt;&lt; 0)</span><br><span class="line"> </span><br><span class="line"> #define AV_FRAME_FLAG_DISCARD   (1 &lt;&lt; 2)</span><br><span class="line"> </span><br><span class="line">     int flags;</span><br><span class="line"> </span><br><span class="line">     enum AVColorRange color_range;</span><br><span class="line"> </span><br><span class="line">     enum AVColorPrimaries color_primaries;</span><br><span class="line"> </span><br><span class="line">     enum AVColorTransferCharacteristic color_trc;</span><br><span class="line"> </span><br><span class="line">     enum AVColorSpace colorspace;</span><br><span class="line"> </span><br><span class="line">     enum AVChromaLocation chroma_location;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 在流时间基中估计帧时间戳.</span><br><span class="line">     int64_t best_effort_timestamp;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 记录最后一个扔进解码器的packet在输入文件中的位置偏移量.</span><br><span class="line">     int64_t pkt_pos;</span><br><span class="line"> </span><br><span class="line">     int64_t pkt_duration;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 编解码时用户设置的信息</span><br><span class="line">     AVDictionary *metadata;</span><br><span class="line"> </span><br><span class="line">     int decode_error_flags;</span><br><span class="line"> #define FF_DECODE_ERROR_INVALID_BITSTREAM   1</span><br><span class="line"> #define FF_DECODE_ERROR_MISSING_REFERENCE   2</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 声道数</span><br><span class="line">     int channels;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; size </span><br><span class="line">     int pkt_size;</span><br><span class="line"> </span><br><span class="line"> #if FF_API_FRAME_QP</span><br><span class="line">     attribute_deprecated</span><br><span class="line">     int8_t *qscale_table;</span><br><span class="line">    </span><br><span class="line">     attribute_deprecated</span><br><span class="line">     int qstride;</span><br><span class="line"> </span><br><span class="line">     attribute_deprecated</span><br><span class="line">     int qscale_type;</span><br><span class="line"> </span><br><span class="line">     AVBufferRef *qp_table_buf;</span><br><span class="line"> #endif</span><br><span class="line"> </span><br><span class="line">     AVBufferRef *hw_frames_ctx;</span><br><span class="line"> </span><br><span class="line">     AVBufferRef *opaque_ref;</span><br><span class="line">     &#x2F;&#x2F;&#x2F; 用于视频帧图像裁切. 四个值分别为从frame的上&#x2F;下&#x2F;左&#x2F;右边界裁切的像素数.</span><br><span class="line">     size_t crop_top;</span><br><span class="line">     size_t crop_bottom;</span><br><span class="line">     size_t crop_left;</span><br><span class="line">     size_t crop_right;</span><br><span class="line"> &#125; AVFrame;</span><br></pre></td></tr></table></figure>
+
+<h4 id="AVFrame-gt-data"><a href="#AVFrame-gt-data" class="headerlink" title="AVFrame -&gt;data"></a>AVFrame -&gt;data</h4><blockquote>
+<p>原始数据(对视频来说是YUB, RGB, 对音频来说是PCM)</p>
+</blockquote>
+<blockquote>
+<p>data是一个指针数组, 数组的每一个元素都是一个指针. 指向视频中图像的某一plane或者音频中某一声道的plane.</p>
+</blockquote>
+<blockquote>
+<p>对于packed格式, 一个YUV图像的Y, U, V交织存储在一个plane中, 例如: YUVYUVYUV… …, data[0]指向这个plane;</p>
+</blockquote>
+<blockquote>
+<p>一个双声道的音频帧有左声道L和右声道R, 它们交织存储在一个plane中, 例如: LRLRLR… …, data[0]指向这个plane.</p>
+</blockquote>
+<blockquote>
+<p>对于planar格式, 一个YUV图像有Y, U, V三个plane, data[0]指向Y plane, data[1]质量U plane, data[2]指向V plane.</p>
+</blockquote>
+<blockquote>
+<p>一个双声道的音频帧有左声道L和右声道R两个plane, data[0]指向L plane, data[1]指向R plane</p>
+</blockquote>
+<h4 id="AVFrame-gt-linesize"><a href="#AVFrame-gt-linesize" class="headerlink" title="AVFrame-&gt;linesize"></a>AVFrame-&gt;linesize</h4><blockquote>
+<p>比如704*576分辨率的视频，它的width=704,height=576,摄像机芯片一般会要求64或者128对齐，当128位对齐时，704不能被128整除，需要在每一行结尾补64字节0x00占位，它的linesize也就是每一行的长度768。所以在解码的时候,宽和yuv的buffer都要以linesize[0]为准，否则就会出现下面这种情况。</p>
+</blockquote>
+<h4 id="AVFrame-gt-extended-data"><a href="#AVFrame-gt-extended-data" class="headerlink" title="AVFrame-&gt;extended_data"></a>AVFrame-&gt;extended_data</h4><blockquote>
+<p>FFmpeg音频解码后的数据是存放在AVFrame结构中的。 Packed格式，frame.data[0]或frame.extended_data[0]包含所有的音频数据中。 Planar格式，frame.data[i]或者frame.extended_data[i]表示第i个声道的数据（假设声道0是第一个）, AVFrame.data数组大小固定为8，如果声道数超过8，需要从frame.extended_data获取声道数据。</p>
+</blockquote>
+<h3 id="AVFrame相关函数"><a href="#AVFrame相关函数" class="headerlink" title="AVFrame相关函数"></a>AVFrame相关函数</h3><ul>
+<li><p>AVFrame *av_frame_alloc(void);</p>
+<p>构造一个AVFrame, 对象成员被设为默认值.<br>此函数只分配AVFrame对象本身, 而不分配AVFrame中的数据缓存区.</p>
+</li>
+<li><p>av_frame_free()<br>释放frame</p>
+</li>
+<li><p>int av_frame_ref(AVFrame *dst, const AVFrame *src);<br>为src中的数据建立一个新的引用。<br>将src中帧的各属性拷到dst中，并且为src中每个AVBufferRef创建一个新的引用。<br>如果src未使用引用计数，则dst中会分配新的数据缓冲区，将将src中缓冲区的数据拷<br>贝到dst中的缓冲区</p>
+</li>
+<li><p>AVFrame *av_frame_clone(const AVFrame *src);<br>创建一个新的frame，新的frame和src使用同一数据缓冲区，缓冲区管理使用引用计数机制。<br>本函数相当于av_frame_alloc()+av_frame_ref()</p>
+</li>
+<li><p>void av_frame_move_ref(AVFrame *dst, AVFrame *src);<br>将src中所有数据拷贝到dst中，并复位src。<br>为避免内存泄漏，在调用av_frame_move_ref(dst, src)之前应先调用av_frame_unref(dst) 。</p>
+</li>
+</ul>
+<ul>
+<li><p>int av_frame_get_buffer(AVFrame *frame, int align);</p>
+<p>为音频或视频数据分配新的缓冲区。<br>调用本函数前，帧中的如下成员必须先设置好：<br>format (视频像素格式或音频采样格式)<br>width、height(视频画面和宽和高)<br>nb_samples、channel_layout(音频单个声道中的采样点数目和声道布局)<br>本函数会填充AVFrame.data和AVFrame.buf数组，如果有需要，还会分配和填充AVFrame.extended_data和AVFrame.extended_buf。<br>对于planar格式，会为每个plane分配一个缓冲区。</p>
+</li>
+<li><p>int av_frame_copy(AVFrame *dst, const AVFrame *src);</p>
+<p>将src中的帧数据拷贝到dst中。<br>本函数并不会有任何分配缓冲区的动作，调用此函数前dst必须已经使用了和src同样的参数完成了初始化。<br>本函数只拷贝帧中的数据缓冲区的内容(data/extended_data数组中的内容)，而不涉及帧中任何其他的属性。</p>
+</li>
+</ul>
+<h3 id="FFPacket"><a href="#FFPacket" class="headerlink" title="FFPacket"></a>FFPacket</h3><p>AVPacket中存储的是经过编码的压缩数据。在解码中，AVPacket由解复用器输出到解码器；在编码中，AVPacket由编码器输出到复用器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">typedef struct AVPacket &#123;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 数据缓冲区引用，也可叫引用计数缓冲区</span><br><span class="line">    AVBufferRef *buf;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 显示时间</span><br><span class="line">    int64_t pts;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 编解码时间</span><br><span class="line">    int64_t dts;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;packet标志位。比如是否关键帧等</span><br><span class="line">    int   flags;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;数据</span><br><span class="line">    uint8_t *data;</span><br><span class="line">    int   size;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; stream index </span><br><span class="line">    int   stream_index;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 额外包数据</span><br><span class="line">    int side_data_elems;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 当前包解码后的帧播放持续的时长。单位timebase。值等于下一帧pts减当前帧pts。</span><br><span class="line">    int64_t duration;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 当前包在流中的位置，单位字节</span><br><span class="line">    int64_t pos;                           </span><br><span class="line">#if FF_API_CONVERGENCE_DURATION</span><br><span class="line">    int64_t convergence_duration;</span><br><span class="line">#endif</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AVPacket-相关函数"><a href="#AVPacket-相关函数" class="headerlink" title="AVPacket 相关函数"></a>AVPacket 相关函数</h3><ul>
+<li><p>av_packet_alloc():<br>为AVPacket分配内存，不涉及存储压缩编码数据的buffer，可以使用其他方法来为buffer分配空间比如av_new_packet()。</p>
+</li>
+<li><p>av_init_packet():<br>使用默认值初始化一些字段，并不会触碰AVPacket的成员data和size。</p>
+</li>
+<li><p>av_new_packet():<br>根据指定的数据大小为AVPacket的buf分配的内存，然后调用了av_init_packet()进行初始化。</p>
+</li>
+<li><p>av_packet_from_data():<br>使用已经分配好的buffer初始化一个AVPacket，会设置AVPacket的data和size成员。传入的size参数是减去了AV_INPUT_BUFFER_PADDING_SIZE的，也就是size + AV_INPUT_BUFFER_PADDING_SIZE等于buffer总的大小。</p>
+</li>
+<li><p>av_packet_free():<br> 释放AVPacket内存，如果AVPacket的数据是以引用计数方式存储的，则先解引用。</p>
+</li>
+</ul>
+<h3 id="ACStream"><a href="#ACStream" class="headerlink" title="ACStream"></a>ACStream</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line">typedef struct AVStream &#123;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 流的索引</span><br><span class="line">    int index;    </span><br><span class="line">    &#x2F;&#x2F;&#x2F; 流的标识，依赖于具体的容器格式。</span><br><span class="line">    int id;</span><br><span class="line">#if FF_API_LAVF_AVCTX</span><br><span class="line"></span><br><span class="line">    attribute_deprecated</span><br><span class="line">    &#x2F;&#x2F;&#x2F;选择哪些数据包可以随意丢弃，不需要去demux</span><br><span class="line">    AVCodecContext *codec;</span><br><span class="line">#endif</span><br><span class="line">    void *priv_data;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 时间基</span><br><span class="line">    AVRational time_base;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 开始时间</span><br><span class="line">    int64_t start_time;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 时长</span><br><span class="line">    int64_t duration;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 帧的个数</span><br><span class="line">    int64_t nb_frames;                </span><br><span class="line">    int disposition; </span><br><span class="line">    enum AVDiscard discard; </span><br><span class="line">    &#x2F;&#x2F;&#x2F; 样本长宽比（如果未知，则为0）</span><br><span class="line">    AVRational sample_aspect_ratio;</span><br><span class="line">    &#x2F;&#x2F;元数据信息</span><br><span class="line">    AVDictionary *metadata;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 平均帧率</span><br><span class="line">    AVRational avg_frame_rate;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 关联图片</span><br><span class="line">    AVPacket attached_pic;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;</span><br><span class="line">    AVPacketSideData *side_data;</span><br><span class="line">    int event_flags;</span><br><span class="line">    AVRational r_frame_rate;</span><br><span class="line"></span><br><span class="line">#if FF_API_LAVF_FFSERVER</span><br><span class="line"></span><br><span class="line">    attribute_deprecated</span><br><span class="line">      &#x2F;**</span><br><span class="line">         * 包含键和值的一系列字符串，用于描述推荐的编码器配置。</span><br><span class="line">         * 系列以 &#39;,&#39;分割.</span><br><span class="line">         * 键和值由&#39;&#x3D;&#39;分割.</span><br><span class="line">     *&#x2F;</span><br><span class="line">    char *recommended_encoder_configuration;</span><br><span class="line">#endif</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 编解码参数 </span><br><span class="line">    AVCodecParameters *codecpar;</span><br><span class="line">#define MAX_STD_TIMEBASES (30*12+30+3+6)</span><br><span class="line"></span><br><span class="line">    struct &#123;</span><br><span class="line">        int64_t last_dts;</span><br><span class="line">        int64_t duration_gcd;</span><br><span class="line">        int duration_count;</span><br><span class="line">        int64_t rfps_duration_sum;</span><br><span class="line">        double (*duration_error)[2][MAX_STD_TIMEBASES];</span><br><span class="line">        int64_t codec_info_duration;</span><br><span class="line">        int64_t codec_info_duration_fields;</span><br><span class="line">        int frame_delay_evidence;</span><br><span class="line">        int found_decoder;</span><br><span class="line">        int64_t last_duration;</span><br><span class="line">        int64_t fps_first_dts;</span><br><span class="line">        int     fps_first_dts_idx;</span><br><span class="line">        int64_t fps_last_dts;</span><br><span class="line">        int     fps_last_dts_idx;</span><br><span class="line"></span><br><span class="line">    &#125; *info;</span><br><span class="line"></span><br><span class="line">    int pts_wrap_bits; </span><br><span class="line">    int64_t first_dts;</span><br><span class="line">    int64_t cur_dts;</span><br><span class="line">    int64_t last_IP_pts;</span><br><span class="line">    int last_IP_duration;</span><br><span class="line">    int probe_packets;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;在av_find_stream_info（）期间已经解封装的帧数。</span><br><span class="line">    int codec_info_nb_frames;</span><br><span class="line">    enum AVStreamParseType need_parsing;</span><br><span class="line">    struct AVCodecParserContext *parser;</span><br><span class="line">    struct AVPacketList *last_in_packet_buffer;</span><br><span class="line">    AVProbeData probe_data;</span><br><span class="line">    int64_t pts_buffer[MAX_REORDER_DELAY+1];</span><br><span class="line">    AVIndexEntry *index_entries;</span><br><span class="line">    int nb_index_entries;</span><br><span class="line">    unsigned int index_entries_allocated_size;</span><br><span class="line">    int stream_identifier;</span><br><span class="line">    int program_num;</span><br><span class="line">    int pmt_version;</span><br><span class="line">    int pmt_stream_idx;</span><br><span class="line">    int64_t interleaver_chunk_size;</span><br><span class="line">    int64_t interleaver_chunk_duration;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;流探测状态，1表示探测完成，0表示没有探测请求，rest 执行探测。</span><br><span class="line">    int request_probe;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;表示应丢弃直到下一个关键帧的所有内容。</span><br><span class="line">    int skip_to_keyframe;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;在从下一个数据包解码的帧开始时要跳过的采样数。</span><br><span class="line">    int skip_samples;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;如果不是0，则应该从流的开始跳过的采样的数目</span><br><span class="line">    int64_t start_skip_samples;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;如果不是0，则应该从流中丢弃第一个音频样本。</span><br><span class="line">    int64_t first_discard_sample;</span><br><span class="line">    int64_t last_discard_sample;</span><br><span class="line">    int nb_decoded_frames;</span><br><span class="line">    int64_t mux_ts_offset;</span><br><span class="line">    int64_t pts_wrap_reference;</span><br><span class="line">    int pts_wrap_behavior;</span><br><span class="line">    int update_initial_durations_done;</span><br><span class="line">    int64_t pts_reorder_error[MAX_REORDER_DELAY+1];</span><br><span class="line">    uint8_t pts_reorder_error_count[MAX_REORDER_DELAY+1];</span><br><span class="line">    int64_t last_dts_for_order_check;</span><br><span class="line">    uint8_t dts_ordered;</span><br><span class="line">    uint8_t dts_misordered;</span><br><span class="line">    int inject_global_side_data;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;显示宽高比。</span><br><span class="line">    AVRational display_aspect_ratio;</span><br><span class="line">    AVStreamInternal *internal;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/12/media-sumery/" rel="next" title="media 常用概念收集">
+                <i class="fa fa-chevron-left"></i> media 常用概念收集
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/09/Metal/" rel="prev" title="Metal">
+                Metal <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#AVFrame"><span class="nav-number">1.</span> <span class="nav-text">AVFrame</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AVFrame-gt-data"><span class="nav-number">1.1.</span> <span class="nav-text">AVFrame -&gt;data</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AVFrame-gt-linesize"><span class="nav-number">1.2.</span> <span class="nav-text">AVFrame-&gt;linesize</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AVFrame-gt-extended-data"><span class="nav-number">1.3.</span> <span class="nav-text">AVFrame-&gt;extended_data</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AVFrame相关函数"><span class="nav-number">2.</span> <span class="nav-text">AVFrame相关函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FFPacket"><span class="nav-number">3.</span> <span class="nav-text">FFPacket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AVPacket-相关函数"><span class="nav-number">4.</span> <span class="nav-text">AVPacket 相关函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ACStream"><span class="nav-number">5.</span> <span class="nav-text">ACStream</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

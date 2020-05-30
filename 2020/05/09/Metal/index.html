@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Metal两种管线类型 计算管线创建metal 对象1234567891011121314&#x2F;&#x2F;&#x2F; 创建metal 对象 device &#x3D; MTLCreateSystemDefaultDevice()!queue &#x3D; device.makeCommandQueue()let path &#x3D; Bundle.main.path(forResour">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Metal">
+<meta property="og:url" content="http://yoursite.com/2020/05/09/Metal/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="Metal两种管线类型 计算管线创建metal 对象1234567891011121314&#x2F;&#x2F;&#x2F; 创建metal 对象 device &#x3D; MTLCreateSystemDefaultDevice()!queue &#x3D; device.makeCommandQueue()let path &#x3D; Bundle.main.path(forResour">
+<meta property="article:published_time" content="2020-05-09T01:58:28.000Z">
+<meta property="article:modified_time" content="2020-05-18T13:15:19.840Z">
+<meta property="article:author" content="hqz">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/09/Metal/"/>
+
+
+
+
+
+  <title>Metal | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/09/Metal/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Metal</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-09T09:58:28+08:00">
+                2020-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Metal"><a href="#Metal" class="headerlink" title="Metal"></a>Metal</h2><p><code>两种管线类型</code></p>
+<h3 id="计算管线"><a href="#计算管线" class="headerlink" title="计算管线"></a>计算管线</h3><h4 id="创建metal-对象"><a href="#创建metal-对象" class="headerlink" title="创建metal 对象"></a>创建metal 对象</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; 创建metal 对象 </span><br><span class="line">device &#x3D; MTLCreateSystemDefaultDevice()!</span><br><span class="line">queue &#x3D; device.makeCommandQueue()</span><br><span class="line">let path &#x3D; Bundle.main.path(forResource: &quot;Shaders&quot;, ofType: &quot;metal&quot;)</span><br><span class="line">do &#123;</span><br><span class="line">  let input &#x3D; try String(contentsOfFile: path!, encoding: String.Encoding.utf8)</span><br><span class="line">  let library &#x3D; try device.makeLibrary(source: input, options: nil)</span><br><span class="line">  &#x2F;&#x2F;&#x2F; 加载内核函数</span><br><span class="line">  let kernel &#x3D; library.makeFunction(name: &quot;compute&quot;)!</span><br><span class="line">  &#x2F;&#x2F;&#x2F; 创建计算管线 </span><br><span class="line">ps &#x3D; try device.makeComputePipelineState(function: kernel)</span><br><span class="line">&#125; catch let e &#123;</span><br><span class="line">  Swift.print(&quot;\(e)&quot;) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="绘制"><a href="#绘制" class="headerlink" title="绘制"></a>绘制</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; 绘制</span><br><span class="line">    public func draw(in view: MTKView) &#123;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 当前view的  CAMetalDrawable</span><br><span class="line">    if let drawable &#x3D; view.currentDrawable,</span><br><span class="line">    &#x2F;&#x2F;&#x2F;创建 command buffer </span><br><span class="line">    let commandBuffer &#x3D; queue.makeCommandBuffer(),</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 命令编码器</span><br><span class="line">    let commandEncoder &#x3D; commandBuffer.makeComputeCommandEncoder() &#123;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 设置渲染管线描述 </span><br><span class="line">    commandEncoder.setComputePipelineState(cps)</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 设置纹理</span><br><span class="line">    commandEncoder.setTexture(drawable.texture, index: 0)</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 纹理分割为 8x8的网格 每个网格为一个线程组 </span><br><span class="line">    let threadGroupCount &#x3D; MTLSizeMake(8, 8, 1)</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 每个线程组的线程数 </span><br><span class="line">    let threadGroups &#x3D; MTLSizeMake(drawable.texture.width &#x2F; threadGroupCount.width, drawable.texture.height &#x2F; threadGroupCount.height, 1)</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 设置线程组数和 线程组的线程数   </span><br><span class="line">   commandEncoder.dispatchThreadgroups(threadGroups, threadsPerThreadgroup: threadGroupCount)</span><br><span class="line">   &#x2F;&#x2F;&#x2F; 编码   </span><br><span class="line">   commandEncoder.endEncoding()</span><br><span class="line">   &#x2F;&#x2F;&#x2F; </span><br><span class="line">   commandBuffer.present(drawable)</span><br><span class="line">   &#x2F;&#x2F;&#x2F; 提交到队列</span><br><span class="line">   commandBuffer.commit()</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="内核函数"><a href="#内核函数" class="headerlink" title="内核函数"></a>内核函数</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; 内核函数 kernel void  参数中可有输入纹理  输出纹理 和每一个颜色点的位置坐标 </span><br><span class="line">kernel void kernelaction(</span><br><span class="line">texture2d&lt;half, access::read&gt;  sourceTexture [[texture(0)]],</span><br><span class="line">texture2d&lt;half, access::write&gt; destTexture [[texture(1)]],</span><br><span class="line">                uint2 grid [[thread_position_in_grid]])&#123;</span><br><span class="line">    &#x2F;&#x2F; 边界保护</span><br><span class="line">    if(grid.x &lt;&#x3D; destTexture.get_width() &amp;&amp; grid.y &lt;&#x3D; destTexture.get_height())</span><br><span class="line">    &#123;</span><br><span class="line">    &#x2F;&#x2F; 输入纹理 </span><br><span class="line">    half4 color &#x3D; sourceTexture.read(grid); </span><br><span class="line">    &#x2F;&#x2F; 纹理处理</span><br><span class="line">    half  gray &#x3D; dot(color.rgb, kRec709Luma); </span><br><span class="line">    &#x2F;&#x2F; 写入输出纹理</span><br><span class="line">    destTexture.write(half4(gray, gray, gray, 1.0), grid); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="渲染管线"><a href="#渲染管线" class="headerlink" title="渲染管线"></a>渲染管线</h3><h4 id="创建设备及定点数据"><a href="#创建设备及定点数据" class="headerlink" title="创建设备及定点数据"></a>创建设备及定点数据</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; 创建设备</span><br><span class="line">device &#x3D; MTLCreateSystemDefaultDevice()        </span><br><span class="line">commandQueue &#x3D; device?.makeCommandQueue()</span><br><span class="line">&#x2F;&#x2F;&#x2F; 定点数据</span><br><span class="line">let vertex_data &#x3D; [Vertex(position: [-1.0, -1.0, 0.0, 1.0], color: [1, 0, 0, 1]),</span><br><span class="line">                           Vertex(position: [ 1.0, -1.0, 0.0, 1.0], color: [0, 1, 0, 1]),</span><br><span class="line">                           Vertex(position: [ 0.0,  1.0, 0.0, 1.0], color: [0, 0, 1, 1])</span><br><span class="line">        ]</span><br><span class="line">&#x2F;&#x2F;&#x2F; 定点缓冲</span><br><span class="line">vertexBuffer &#x3D; device?.makeBuffer(bytes: vertex_data, length: MemoryLayout&lt;Vertex&gt;.size * 3, options: [])</span><br><span class="line">&#x2F;&#x2F;&#x2F; 定点变换数据</span><br><span class="line">uniformBuffer &#x3D; device?.makeBuffer(bytes: Matrix().m, length: MemoryLayout&lt;Float&gt;.size * 16 , options: [])</span><br></pre></td></tr></table></figure>
+<h4 id="创建着色器"><a href="#创建着色器" class="headerlink" title="创建着色器"></a>创建着色器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">let library &#x3D; device?.makeDefaultLibrary()!</span><br><span class="line">&#x2F;&#x2F;&#x2F; 创建定点着色器函数</span><br><span class="line">let vertex_func &#x3D; library?.makeFunction(name: &quot;vertex_func&quot;)</span><br><span class="line">&#x2F;&#x2F;&#x2F; 片段着色器函数</span><br><span class="line">let frag_func &#x3D; library?.makeFunction(name: &quot;fragment_func&quot;)</span><br><span class="line">&#x2F;&#x2F;&#x2F; 渲染管线描述</span><br><span class="line">let rpld &#x3D; MTLRenderPipelineDescriptor()</span><br><span class="line">rpld.vertexFunction &#x3D; vertex_func    </span><br><span class="line">rpld.fragmentFunction &#x3D; frag_func</span><br><span class="line">&#x2F;&#x2F;&#x2F; 输出像素格式 </span><br><span class="line">rpld.colorAttachments[0].pixelFormat &#x3D; .bgra8Unorm</span><br><span class="line">do&#123;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 渲染管线 </span><br><span class="line">   try rps &#x3D; device?.makeRenderPipelineState(descriptor: rpld)</span><br><span class="line">&#125; catch let error &#123;</span><br><span class="line">   print(&quot;\(error)&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="绘制-1"><a href="#绘制-1" class="headerlink" title="绘制"></a>绘制</h4> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">override func draw(_ rect: CGRect) &#123;</span><br><span class="line">super.draw(rect)</span><br><span class="line">&#x2F;&#x2F;&#x2F; 渲染编码器描述</span><br><span class="line"> if let rpd &#x3D; currentRenderPassDescriptor, let drawable &#x3D; currentDrawable &#123;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 输出颜色</span><br><span class="line">rpd.colorAttachments[0].clearColor &#x3D; MTLClearColorMake(0.5, 0.5, 0.5, 1.0)</span><br><span class="line">let commandBuffer &#x3D; device?.makeCommandQueue()?.makeCommandBuffer()</span><br><span class="line">&#x2F;&#x2F;&#x2F; 编码器</span><br><span class="line">let commandEncoder &#x3D; commandBuffer?.makeRenderCommandEncoder(descriptor: rpd)</span><br><span class="line">&#x2F;&#x2F;&#x2F; 渲染管线描述关联到编码器命令</span><br><span class="line">commandEncoder?.setRenderPipelineState(rps!)</span><br><span class="line">&#x2F;&#x2F;&#x2F; 设置顶点数据</span><br><span class="line">commandEncoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)</span><br><span class="line">&#x2F;&#x2F;&#x2F; 设置顶点变换数据</span><br><span class="line">commandEncoder?.setVertexBuffer(uniformBuffer, offset: 0, index: 1)</span><br><span class="line">&#x2F;&#x2F;&#x2F; 设置绘制图元</span><br><span class="line">commandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3, instanceCount: 1)                                                                            </span><br><span class="line"></span><br><span class="line">    commandEncoder?.endEncoding()</span><br><span class="line">    commandBuffer?.present(drawable)</span><br><span class="line">    commandBuffer?.commit()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F;&#x2F; 设置顶点缓冲数据</span><br><span class="line">   buffer : 顶点缓冲数据</span><br><span class="line">   offset : 数据的偏移量</span><br><span class="line">   index  : 顶点缓冲数据的索引   </span><br><span class="line">   func setVertexBuffer(_ buffer: MTLBuffer?, offset: Int,      index: Int)</span><br></pre></td></tr></table></figure>
+<h4 id="着色器"><a href="#着色器" class="headerlink" title="着色器"></a>着色器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; 顶点数据</span><br><span class="line">struct Vertex &#123;</span><br><span class="line">    float4 position [[position]];</span><br><span class="line">    float4 color;</span><br><span class="line">&#125;;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 顶点变换</span><br><span class="line">struct Uniforms&#123;</span><br><span class="line">    float4x4 modelMatrix;</span><br><span class="line">&#125;;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 顶点着色器</span><br><span class="line">vertex Vertex vertex_func(constant Vertex *vertices [[buffer(0)]],constant Uniforms &amp;uniforms [[buffer(1)]],uint vid [[vertex_id]])&#123;</span><br><span class="line">    float4x4 matrix &#x3D; uniforms.modelMatrix;</span><br><span class="line">    Vertex in &#x3D; vertices[vid];</span><br><span class="line">    Vertex out;</span><br><span class="line">    out.position &#x3D; matrix * float4(in.position);</span><br><span class="line">    out.color &#x3D; in.color;</span><br><span class="line">    return out;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 片段着色器</span><br><span class="line">fragment float4 fragment_func(Vertex vert [[stage_in]])&#123;</span><br><span class="line">    return vert.color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; 顶点着色器 </span><br><span class="line"></span><br><span class="line">[[vertex_id]] 属性修饰符 此处表示顶点的ID</span><br><span class="line">[[buffer(0)]] 属性修饰符 此处表示顶点缓冲数据的索引</span><br><span class="line">  </span><br><span class="line">vertex Vertex vertex_render_target(constant Vertex *vertexes [[ buffer(0) ]],</span><br><span class="line">                                   constant Uniforms &amp;uniforms [[ buffer(1) ]],</span><br><span class="line">                                   uint vid [[vertex_id]])</span><br><span class="line">&#123;</span><br><span class="line">    Vertex out &#x3D; vertexes[vid];</span><br><span class="line">    out.position &#x3D; uniforms.scaleMatrix * out.position;&#x2F;&#x2F; * in.position;</span><br><span class="line">    return out;</span><br><span class="line">&#125;;</span><br><span class="line">&#96;&#96;&#96;</span><br></pre></td></tr></table></figure>
+<p>GPU -&gt; commandQueue -&gt; commandBuffer -&gt; commandBufferEncoder </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 顶点坐标是  纹理坐标   </span><br><span class="line"></span><br><span class="line">一张 100x50的imageView 视图窗口顶点坐标是&#123;0,0,100,50&#125;  一张50x50的image 居中显示  此时图片的左右空白就是25   在这种情况下 纹理坐标就是 &#123;25,0,50,50&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">MetalView -&gt; Cancas (metal)</span><br><span class="line"></span><br><span class="line">Brush  </span><br><span class="line"></span><br><span class="line">RenderTarget  (metal) </span><br><span class="line"></span><br><span class="line">Data </span><br><span class="line"></span><br><span class="line">actiondelegate  </span><br><span class="line"></span><br><span class="line">renderdelegate </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">metalView跟renderTarget 共同使用的同一张纹理  只是metalView绘图时 绘制的是 四个顶点的空背景纹理 ，绘制图片和线条时 图片纹理和点  。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">         </span><br><span class="line">#### guard     </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">###### 1 跟if判断语句同理 </span><br><span class="line">###### 2 可以解包 （解包对象是optional类型）</span><br></pre></td></tr></table></figure>
+<p>本是后山人， 偶做前堂客。 醉舞经阁半卷书， 坐井说天阔。 大志戏功名， 海斗量福祸。 论到囊中羞涩时， 怒指乾坤错</p>
+<pre><code>
+
+
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/15/avstream/" rel="next" title="AVFrame  AVStream AVPacket">
+                <i class="fa fa-chevron-left"></i> AVFrame  AVStream AVPacket
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Metal"><span class="nav-number">1.</span> <span class="nav-text">Metal</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算管线"><span class="nav-number">1.1.</span> <span class="nav-text">计算管线</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建metal-对象"><span class="nav-number">1.1.1.</span> <span class="nav-text">创建metal 对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#绘制"><span class="nav-number">1.1.2.</span> <span class="nav-text">绘制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内核函数"><span class="nav-number">1.1.3.</span> <span class="nav-text">内核函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#渲染管线"><span class="nav-number">1.2.</span> <span class="nav-text">渲染管线</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建设备及定点数据"><span class="nav-number">1.2.1.</span> <span class="nav-text">创建设备及定点数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建着色器"><span class="nav-number">1.2.2.</span> <span class="nav-text">创建着色器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#绘制-1"><span class="nav-number">1.2.3.</span> <span class="nav-text">绘制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#着色器"><span class="nav-number">1.2.4.</span> <span class="nav-text">着色器</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

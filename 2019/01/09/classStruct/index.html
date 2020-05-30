@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="runtime的特性 runtime是Objective-C动态特性的基石 主要负责OC的消息转发 消息传递 Method-Swizzing 动态添加方法   runtime 的数据结构 OC的底层实现是runtime，在runtime这一层，对象被定义为objc_object 结构体，类被定义为了objc_class 结构体。而objc_class 继承于objc_object， 因此，类可以看">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS runtime">
+<meta property="og:url" content="http://yoursite.com/2019/01/09/classStruct/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="runtime的特性 runtime是Objective-C动态特性的基石 主要负责OC的消息转发 消息传递 Method-Swizzing 动态添加方法   runtime 的数据结构 OC的底层实现是runtime，在runtime这一层，对象被定义为objc_object 结构体，类被定义为了objc_class 结构体。而objc_class 继承于objc_object， 因此，类可以看">
+<meta property="og:image" content="http://yoursite.com/2019/01/09/classStruct/classStruct/objc_object.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/09/classStruct/classStruct/objc_object.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/09/classStruct/classStruct/scan.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/09/classStruct/classStruct/method_t.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/09/classStruct/classStruct/inhert.png">
+<meta property="og:image" content="http://yoursite.com/2019/01/09/classStruct/classStruct/methodford.png">
+<meta property="article:published_time" content="2019-01-09T13:53:18.000Z">
+<meta property="article:modified_time" content="2019-11-16T13:03:20.000Z">
+<meta property="article:author" content="hqz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/01/09/classStruct/classStruct/objc_object.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/09/classStruct/"/>
+
+
+
+
+
+  <title>iOS runtime | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/09/classStruct/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS runtime</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-09T21:53:18+08:00">
+                2019-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="runtime的特性"><a href="#runtime的特性" class="headerlink" title="runtime的特性"></a>runtime的特性</h2><blockquote>
+<p>runtime是Objective-C动态特性的基石 主要负责OC的消息转发 消息传递 Method-Swizzing 动态添加方法 </p>
+</blockquote>
+<h3 id="runtime-的数据结构"><a href="#runtime-的数据结构" class="headerlink" title="runtime 的数据结构"></a>runtime 的数据结构</h3><blockquote>
+<p>OC的底层实现是runtime，在runtime这一层，对象被定义为objc_object 结构体，类被定义为了objc_class 结构体。而objc_class 继承于objc_object， 因此，类可以看做是一类特殊的对象。 所有的对象都属于id类型  所有的类都属于Class类型 。在程序运行起来之后runtime会将所有的Class定义为object_Calss 所有创建的对象都会定义为objc_object 。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; OC中的类结构</span><br><span class="line">typedef struct objc_class *Class;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;&#x2F; OC中的实例对象 </span><br><span class="line">struct objc_object &#123;</span><br><span class="line">    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;</span><br><span class="line">&#125;;</span><br><span class="line">typedef struct objc_object *id;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>runtime 中objc_object 数据结构 其中主要包括以下的功能 </p>
+</blockquote>
+<p><img src="classStruct/objc_object.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">struct objc_object &#123;</span><br><span class="line">private:</span><br><span class="line">    isa_t isa;</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; ISA() assumes this is NOT a tagged pointer object</span><br><span class="line">    Class ISA();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; getIsa() allows this to be a tagged pointer object</span><br><span class="line">    Class getIsa();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; initIsa() should be used to init the isa of new objects only.</span><br><span class="line">    &#x2F;&#x2F; If this object already has an isa, use changeIsa() for correctness.</span><br><span class="line">    &#x2F;&#x2F; initInstanceIsa(): objects with no custom RR&#x2F;AWZ</span><br><span class="line">    &#x2F;&#x2F; initClassIsa(): class objects</span><br><span class="line">    &#x2F;&#x2F; initProtocolIsa(): protocol objects</span><br><span class="line">    &#x2F;&#x2F; initIsa(): other objects</span><br><span class="line">    void initIsa(Class cls &#x2F;*indexed&#x3D;false*&#x2F;);</span><br><span class="line">    void initClassIsa(Class cls &#x2F;*indexed&#x3D;maybe*&#x2F;);</span><br><span class="line">    void initProtocolIsa(Class cls &#x2F;*indexed&#x3D;maybe*&#x2F;);</span><br><span class="line">    void initInstanceIsa(Class cls, bool hasCxxDtor);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; changeIsa() should be used to change the isa of existing objects.</span><br><span class="line">    &#x2F;&#x2F; If this is a new object, use initIsa() for performance.</span><br><span class="line">    Class changeIsa(Class newCls);</span><br><span class="line"></span><br><span class="line">    bool hasIndexedIsa();</span><br><span class="line">    bool isTaggedPointer();</span><br><span class="line">    bool isClass();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; object may have associated objects?</span><br><span class="line">    bool hasAssociatedObjects();</span><br><span class="line">    void setHasAssociatedObjects();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; object may be weakly referenced?</span><br><span class="line">    bool isWeaklyReferenced();</span><br><span class="line">    void setWeaklyReferenced_nolock();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; object may have -.cxx_destruct implementation?</span><br><span class="line">    bool hasCxxDtor();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Optimized calls to retain&#x2F;release methods</span><br><span class="line">    id retain();</span><br><span class="line">    void release();</span><br><span class="line">    id autorelease();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Implementations of retain&#x2F;release methods</span><br><span class="line">    id rootRetain();</span><br><span class="line">    bool rootRelease();</span><br><span class="line">    id rootAutorelease();</span><br><span class="line">    bool rootTryRetain();</span><br><span class="line">    bool rootReleaseShouldDealloc();</span><br><span class="line">    uintptr_t rootRetainCount();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Implementation of dealloc methods</span><br><span class="line">    bool rootIsDeallocating();</span><br><span class="line">    void clearDeallocating();</span><br><span class="line">    void rootDealloc();</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    void initIsa(Class newCls, bool indexed, bool hasCxxDtor);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Slow paths for inline control</span><br><span class="line">    id rootAutorelease2();</span><br><span class="line">    bool overrelease_error();</span><br><span class="line"></span><br><span class="line">#if SUPPORT_NONPOINTER_ISA</span><br><span class="line">    &#x2F;&#x2F; Unified retain count manipulation for nonpointer isa</span><br><span class="line">    id rootRetain(bool tryRetain, bool handleOverflow);</span><br><span class="line">    bool rootRelease(bool performDealloc, bool handleUnderflow);</span><br><span class="line">    id rootRetain_overflow(bool tryRetain);</span><br><span class="line">    bool rootRelease_underflow(bool performDealloc);</span><br><span class="line"></span><br><span class="line">    void clearDeallocating_weak();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Side table retain count overflow for nonpointer isa</span><br><span class="line">    void sidetable_lock();</span><br><span class="line">    void sidetable_unlock();</span><br><span class="line"> </span><br><span class="line">    void sidetable_moveExtraRC_nolock(size_t extra_rc, bool isDeallocating, bool weaklyReferenced);</span><br><span class="line">    bool sidetable_addExtraRC_nolock(size_t delta_rc);</span><br><span class="line">    bool sidetable_subExtraRC_nolock(size_t delta_rc);</span><br><span class="line">    size_t sidetable_getExtraRC_nolock();</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Side-table-only retain count</span><br><span class="line">    bool sidetable_isDeallocating();</span><br><span class="line">    void sidetable_clearDeallocating();</span><br><span class="line"></span><br><span class="line">    bool sidetable_isWeaklyReferenced();</span><br><span class="line">    void sidetable_setWeaklyReferenced_nolock();</span><br><span class="line"></span><br><span class="line">    id sidetable_retain();</span><br><span class="line">    id sidetable_retain_slow(SideTable *table);</span><br><span class="line"></span><br><span class="line">    bool sidetable_release(bool performDealloc &#x3D; true);</span><br><span class="line">    bool sidetable_release_slow(SideTable *table, bool performDealloc &#x3D; true);</span><br><span class="line"></span><br><span class="line">    bool sidetable_tryRetain();</span><br><span class="line"></span><br><span class="line">    uintptr_t sidetable_retainCount();</span><br><span class="line">#if !NDEBUG</span><br><span class="line">    bool sidetable_present();</span><br><span class="line">#endif</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>objc_Class 继承objc_object  主要有以下的功能 </p>
+</blockquote>
+<p><img src="classStruct/objc_object.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br></pre></td><td class="code"><pre><span class="line">objc_Class的结构 </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">struct objc_class : objc_object &#123;</span><br><span class="line">    &#x2F;&#x2F; Class ISA;</span><br><span class="line">    Class superclass;</span><br><span class="line">    cache_t cache;             &#x2F;&#x2F; formerly cache pointer and vtable</span><br><span class="line">    class_data_bits_t bits;    &#x2F;&#x2F; class_rw_t * plus custom rr&#x2F;alloc flags</span><br><span class="line"></span><br><span class="line">    class_rw_t *data() &#123; </span><br><span class="line">        return bits.data();</span><br><span class="line">    &#125;</span><br><span class="line">    void setData(class_rw_t *newData) &#123;</span><br><span class="line">        bits.setData(newData);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void setInfo(uint32_t set) &#123;</span><br><span class="line">        assert(isFuture()  ||  isRealized());</span><br><span class="line">        data()-&gt;setFlags(set);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void clearInfo(uint32_t clear) &#123;</span><br><span class="line">        assert(isFuture()  ||  isRealized());</span><br><span class="line">        data()-&gt;clearFlags(clear);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; set and clear must not overlap</span><br><span class="line">    void changeInfo(uint32_t set, uint32_t clear) &#123;</span><br><span class="line">        assert(isFuture()  ||  isRealized());</span><br><span class="line">        assert((set &amp; clear) &#x3D;&#x3D; 0);</span><br><span class="line">        data()-&gt;changeFlags(set, clear);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool hasCustomRR() &#123;</span><br><span class="line">        return ! bits.hasDefaultRR();</span><br><span class="line">    &#125;</span><br><span class="line">    void setHasDefaultRR() &#123;</span><br><span class="line">        assert(isInitializing());</span><br><span class="line">        bits.setHasDefaultRR();</span><br><span class="line">    &#125;</span><br><span class="line">    void setHasCustomRR(bool inherited &#x3D; false);</span><br><span class="line">    void printCustomRR(bool inherited);</span><br><span class="line"></span><br><span class="line">    bool hasCustomAWZ() &#123;</span><br><span class="line">        return ! bits.hasDefaultAWZ();</span><br><span class="line">    &#125;</span><br><span class="line">    void setHasDefaultAWZ() &#123;</span><br><span class="line">        assert(isInitializing());</span><br><span class="line">        bits.setHasDefaultAWZ();</span><br><span class="line">    &#125;</span><br><span class="line">    void setHasCustomAWZ(bool inherited &#x3D; false);</span><br><span class="line">    void printCustomAWZ(bool inherited);</span><br><span class="line"></span><br><span class="line">    bool requiresRawIsa() &#123;</span><br><span class="line">        return bits.requiresRawIsa();</span><br><span class="line">    &#125;</span><br><span class="line">    void setRequiresRawIsa(bool inherited &#x3D; false);</span><br><span class="line">    void printRequiresRawIsa(bool inherited);</span><br><span class="line"></span><br><span class="line">    bool canAllocIndexed() &#123;</span><br><span class="line">        return !requiresRawIsa();</span><br><span class="line">    &#125;</span><br><span class="line">    bool canAllocFast() &#123;</span><br><span class="line">        return bits.canAllocFast();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    bool hasCxxCtor() &#123;</span><br><span class="line">        &#x2F;&#x2F; addSubclass() propagates this flag from the superclass.</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        return bits.hasCxxCtor();</span><br><span class="line">    &#125;</span><br><span class="line">    void setHasCxxCtor() &#123; </span><br><span class="line">        bits.setHasCxxCtor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool hasCxxDtor() &#123;</span><br><span class="line">        &#x2F;&#x2F; addSubclass() propagates this flag from the superclass.</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        return bits.hasCxxDtor();</span><br><span class="line">    &#125;</span><br><span class="line">    void setHasCxxDtor() &#123; </span><br><span class="line">        bits.setHasCxxDtor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    bool isSwift() &#123;</span><br><span class="line">        return bits.isSwift();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#if SUPPORT_NONPOINTER_ISA</span><br><span class="line">    &#x2F;&#x2F; Tracked in non-pointer isas; not tracked otherwise</span><br><span class="line">#else</span><br><span class="line">    bool instancesHaveAssociatedObjects() &#123;</span><br><span class="line">        &#x2F;&#x2F; this may be an unrealized future class in the CF-bridged case</span><br><span class="line">        assert(isFuture()  ||  isRealized());</span><br><span class="line">        return data()-&gt;flags &amp; RW_INSTANCES_HAVE_ASSOCIATED_OBJECTS;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void setInstancesHaveAssociatedObjects() &#123;</span><br><span class="line">        &#x2F;&#x2F; this may be an unrealized future class in the CF-bridged case</span><br><span class="line">        assert(isFuture()  ||  isRealized());</span><br><span class="line">        setInfo(RW_INSTANCES_HAVE_ASSOCIATED_OBJECTS);</span><br><span class="line">    &#125;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">    bool shouldGrowCache() &#123;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void setShouldGrowCache(bool) &#123;</span><br><span class="line">        &#x2F;&#x2F; fixme good or bad for memory use?</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool shouldFinalizeOnMainThread() &#123;</span><br><span class="line">        &#x2F;&#x2F; finishInitializing() propagates this flag from the superclass.</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        return data()-&gt;flags &amp; RW_FINALIZE_ON_MAIN_THREAD;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void setShouldFinalizeOnMainThread() &#123;</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        setInfo(RW_FINALIZE_ON_MAIN_THREAD);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool isInitializing() &#123;</span><br><span class="line">        return getMeta()-&gt;data()-&gt;flags &amp; RW_INITIALIZING;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void setInitializing() &#123;</span><br><span class="line">        assert(!isMetaClass());</span><br><span class="line">        ISA()-&gt;setInfo(RW_INITIALIZING);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool isInitialized() &#123;</span><br><span class="line">        return getMeta()-&gt;data()-&gt;flags &amp; RW_INITIALIZED;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void setInitialized();</span><br><span class="line"></span><br><span class="line">    bool isLoadable() &#123;</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        return true;  &#x2F;&#x2F; any class registered for +load is definitely loadable</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    IMP getLoadMethod();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Locking: To prevent concurrent realization, hold runtimeLock.</span><br><span class="line">    bool isRealized() &#123;</span><br><span class="line">        return data()-&gt;flags &amp; RW_REALIZED;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Returns true if this is an unrealized future class.</span><br><span class="line">    &#x2F;&#x2F; Locking: To prevent concurrent realization, hold runtimeLock.</span><br><span class="line">    bool isFuture() &#123; </span><br><span class="line">        return data()-&gt;flags &amp; RW_FUTURE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool isMetaClass() &#123;</span><br><span class="line">        assert(this);</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        return data()-&gt;ro-&gt;flags &amp; RO_META;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; NOT identical to this-&gt;ISA when this is a metaclass</span><br><span class="line">    Class getMeta() &#123;</span><br><span class="line">        if (isMetaClass()) return (Class)this;</span><br><span class="line">        else return this-&gt;ISA();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool isRootClass() &#123;</span><br><span class="line">        return superclass &#x3D;&#x3D; nil;</span><br><span class="line">    &#125;</span><br><span class="line">    bool isRootMetaclass() &#123;</span><br><span class="line">        return ISA() &#x3D;&#x3D; (Class)this;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    const char *mangledName() &#123; </span><br><span class="line">        &#x2F;&#x2F; fixme can&#39;t assert locks here</span><br><span class="line">        assert(this);</span><br><span class="line"></span><br><span class="line">        if (isRealized()  ||  isFuture()) &#123;</span><br><span class="line">            return data()-&gt;ro-&gt;name;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            return ((const class_ro_t *)data())-&gt;name;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    const char *demangledName(bool realize &#x3D; false);</span><br><span class="line">    const char *nameForLogging();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; May be unaligned depending on class&#39;s ivars.</span><br><span class="line">    uint32_t unalignedInstanceSize() &#123;</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        return data()-&gt;ro-&gt;instanceSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Class&#39;s ivar size rounded up to a pointer-size boundary.</span><br><span class="line">    uint32_t alignedInstanceSize() &#123;</span><br><span class="line">        return word_align(unalignedInstanceSize());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    size_t instanceSize(size_t extraBytes) &#123;</span><br><span class="line">        size_t size &#x3D; alignedInstanceSize() + extraBytes;</span><br><span class="line">        &#x2F;&#x2F; CF requires all objects be at least 16 bytes.</span><br><span class="line">        if (size &lt; 16) size &#x3D; 16;</span><br><span class="line">        return size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void setInstanceSize(uint32_t newSize) &#123;</span><br><span class="line">        assert(isRealized());</span><br><span class="line">        if (newSize !&#x3D; data()-&gt;ro-&gt;instanceSize) &#123;</span><br><span class="line">            assert(data()-&gt;flags &amp; RW_COPIED_RO);</span><br><span class="line">            *const_cast&lt;uint32_t *&gt;(&amp;data()-&gt;ro-&gt;instanceSize) &#x3D; newSize;</span><br><span class="line">        &#125;</span><br><span class="line">        bits.setFastInstanceSize(newSize);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>在objc_class中，有三个数据成员：<br>    Class superclass ：同样是Class类型，表明当前类的父类。<br>    cache_t cache ：cache用于存储方法 优化方法调用，其对应的数据结构如是：<br>    class_data_bits_t bits   保存类中的属性、方法还有遵循的协议等信息都  </p>
+</blockquote>
+<blockquote>
+<p>runtime方法调用的流程是，当要调用一个方法时，先不去Class的方法列表中查找，而是先去找cache_t cache 。当系统调用过一个方法后，会将其实现IMP和key存放到cache中，因为理论上一个方法调用过后，被再次调用的概率很大.</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F;cache的核心是有一个类型为bucket_t的指针，它指向了一个以_key和IMP对应的缓存节点。</span><br><span class="line"> struct cache_t &#123;</span><br><span class="line">    struct bucket_t *_buckets;</span><br><span class="line">    mask_t _mask;</span><br><span class="line">    mask_t _occupied;</span><br><span class="line">    &#x2F;&#x2F; 省略其余方法</span><br><span class="line">    。。。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F;指向了一个以_key和IMP对应的缓存节点。</span><br><span class="line">typedef uintptr_t cache_key_t;</span><br><span class="line">    </span><br><span class="line">struct bucket_t &#123;</span><br><span class="line">private:</span><br><span class="line">cache_key_t _key;</span><br><span class="line">IMP _imp;</span><br><span class="line">    </span><br><span class="line">public:</span><br><span class="line">inline cache_key_t key() const &#123; return _key; &#125;</span><br><span class="line">inline IMP imp() const &#123; return (IMP)_imp; &#125;</span><br><span class="line">inline void setKey(cache_key_t newKey) &#123; _key &#x3D; newKey; &#125;</span><br><span class="line">inline void setImp(IMP newImp) &#123; _imp &#x3D; newImp; &#125;</span><br><span class="line">    </span><br><span class="line">void set(cache_key_t newKey, IMP newImp);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>class_data_bits_t bits：这是Class的核心，其本质是一个可以被Mask的指针类型。根据不同的Mask，可以取出不同的值。<br>class_data_bits_t bits 仅含有一个成员uintptr_t bits，当类的信息全部加载在之后会存储在内存之中。  可以理解为一个‘复合指针’。什么意思呢，就是bits不仅包含了指针，同时包含了Class的各种异或flag，来说明Class的属性。把这些信息复合在一起，仅用一个uint指针bits来表示。当需要取出这些信息时，需要用对应的以FAST_ 前缀开头的flag掩码对bits做按位与操作。  </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">struct class_data_bits_t &#123;</span><br><span class="line">    &#x2F;&#x2F; Values are the FAST_ flags above.</span><br><span class="line">    uintptr_t bits;</span><br><span class="line">	public:</span><br><span class="line">    class_rw_t* data() &#123;</span><br><span class="line">        return (class_rw_t *)(bits &amp; FAST_DATA_MASK);</span><br><span class="line">    &#125;</span><br><span class="line">    void setData(class_rw_t *newData)&#123;</span><br><span class="line">        assert(!data()  ||  (newData-&gt;flags &amp; (RW_REALIZING | RW_FUTURE)));</span><br><span class="line">        &#x2F;&#x2F; Set during realization or construction only. No locking needed.</span><br><span class="line">        &#x2F;&#x2F; Use a store-release fence because there may be concurrent</span><br><span class="line">        &#x2F;&#x2F; readers of data and data&#39;s contents.</span><br><span class="line">        uintptr_t newBits &#x3D; (bits &amp; ~FAST_DATA_MASK) | (uintptr_t)newData;</span><br><span class="line">        atomic_thread_fence(memory_order_release);</span><br><span class="line">        bits &#x3D; newBits;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>让我们再看一下Class的核心结构class_rw_t ：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">struct class_rw_t &#123;</span><br><span class="line">    &#x2F;&#x2F; Be warned that Symbolication knows the layout of this structure.</span><br><span class="line">    uint32_t flags;</span><br><span class="line">    uint32_t version;</span><br><span class="line"></span><br><span class="line">    const class_ro_t *ro;         &#x2F;&#x2F; 类不可修改的原始核心</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 下面三个array，method,property, protocol，可以被runtime 扩展，如Category</span><br><span class="line">    method_array_t methods;</span><br><span class="line">    property_array_t properties;</span><br><span class="line">    protocol_array_t protocols;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 和继承相关的东西</span><br><span class="line">    Class firstSubclass;</span><br><span class="line">    Class nextSiblingClass;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Class对应的 符号名称</span><br><span class="line">    char *demangledName;</span><br><span class="line">	</span><br><span class="line">	&#x2F;&#x2F; 以下方法省略</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct class_ro_t &#123;</span><br><span class="line">    uint32_t flags;</span><br><span class="line">    uint32_t instanceStart;</span><br><span class="line">    uint32_t instanceSize;</span><br><span class="line">#ifdef __LP64__</span><br><span class="line">    uint32_t reserved;</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">    const uint8_t * ivarLayout;</span><br><span class="line">    </span><br><span class="line">    const char * name;</span><br><span class="line">    method_list_t * baseMethodList;</span><br><span class="line">    protocol_list_t * baseProtocols;</span><br><span class="line">    const ivar_list_t * ivars;</span><br><span class="line"></span><br><span class="line">    const uint8_t * weakIvarLayout;</span><br><span class="line">    property_list_t *baseProperties;</span><br><span class="line"></span><br><span class="line">    method_list_t *baseMethods() const &#123;</span><br><span class="line">        return baseMethodList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以看到，在class_ro_t 中包含了类的名称，以及method_list_t， protocol_list_t， ivar_list_t， property_list_t 这些类的基本信息。 在class_ro_t 的信息是不可修改和扩展的 。不能在runTime下扩展</p>
+<p>而在更外一层 class_rw_t 中，有三个数组method_array_t, property_array_t, protocol_array_t： 在runTime中可以动态的扩展 </p>
+<p>objc_class 中包含class_data_bits_t, class_data_bits_t 中通过FAST_DATA_MASK获取指向class_rw_t类型的指针，而在class_rw_t中包含class_ro_t，类的核心const信息。</p>
+<blockquote>
+<p>大体的数据结构图  </p>
+</blockquote>
+<p><img src="classStruct/scan.png" alt=""></p>
+<blockquote>
+<p>Method_t  数据结构 </p>
+</blockquote>
+<p><img src="classStruct/method_t.png" alt=""></p>
+<blockquote>
+<p>数据的继承关系 </p>
+</blockquote>
+<p><img src="classStruct/inhert.png" alt=""></p>
+<blockquote>
+<p>消息转发流程<br><img src="classStruct/methodford.png" alt=""></p>
+</blockquote>
+<blockquote>
+<p>方法实现的交换 </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Method m1 &#x3D; class_getInstanceMethod(self, @selector(action1));</span><br><span class="line">Method m2 &#x3D; class_getInstanceMethod(self, @selector(action2));</span><br><span class="line">method_exchangeImplementations(m1, m2);</span><br></pre></td></tr></table></figure>
+
+
+<p><code>注意 ： 只有objc_allocateClassPair动态创建一个class，才能调用class_addIvar创建Ivar，最后通过objc_registerClassPair注册class。 不能在已存在的class中添加Ivar！！！！</code></p>
+<blockquote>
+<p>在调用realizeClass方法前，Category定义的各种方法，属性还没有附加到class上，因此只能够返回类的基本信息。<br>而当我们调用realizeClass时，会在函数内部将Category中定义的各种扩展附加到class上，同时改写data()的返回值为class_rw_t *类型<br>所以在class没有调用realizeClass之前，不是真正完整的类</p>
+</blockquote>
+<blockquote>
+<p>objc_getClass参数是类名的字符串，返回的就是这个类的类对象；object_getClass参数是id类型，它返回的是这个id的isa指针所指向的Class，如果传参是Class，则返回该Class的metaClass。  </p>
+</blockquote>
+<p> <a href="https://blog.csdn.net/u013378438/article/details/80493158" target="_blank" rel="noopener">参考博客 slunlun</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/12/Charles/" rel="next" title="Charles">
+                <i class="fa fa-chevron-left"></i> Charles
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/02/HandyJSO-MetaClass/" rel="prev" title="HandyJSON">
+                HandyJSON <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#runtime的特性"><span class="nav-number">1.</span> <span class="nav-text">runtime的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#runtime-的数据结构"><span class="nav-number">1.1.</span> <span class="nav-text">runtime 的数据结构</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

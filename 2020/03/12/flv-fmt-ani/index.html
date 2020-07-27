@@ -85,17 +85,17 @@
 <meta property="og:url" content="http://yoursite.com/2020/03/12/flv-fmt-ani/index.html">
 <meta property="og:site_name" content="Hqz_Blog">
 <meta property="og:description" content="1，多媒体文件格式  FLV多媒体的文件格式（分装格式）跟多媒体的编码格式不一样。多媒体容器作为作为编码格式的载体，将编码的数据封装起来。多媒体格式一般有两种类型 ：存储类型和流媒体类型。 1 存储类型 (mp4, avi, mkv, rmvb, asf)2 流媒体类型 (flv, ts, 一般搭配的网络协议有 rtmp, http, hls)  2，FLV 文件格式FLV（Flash Video">
-<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/flv-fmt-ani/total.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/flv-fmt-ani/header.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/flv-fmt-ani/body.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/total.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/header.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/body.png">
 <meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/script">
-<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/flv-fmt-ani/videotag.png">
-<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/flv-fmt-ani/sudioTag.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/videotag.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/sudioTag.png">
 <meta property="article:published_time" content="2020-03-12T10:39:23.000Z">
 <meta property="article:modified_time" content="2020-03-12T10:46:34.897Z">
 <meta property="article:author" content="hqz">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/flv-fmt-ani/total.png">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/12/flv-fmt-ani/total.png">
 
 
 
@@ -309,8 +309,8 @@
 <p>1 存储类型 (mp4, avi, mkv, rmvb, asf)<br>2 流媒体类型 (flv, ts, 一般搭配的网络协议有 rtmp, http, hls) </p>
 <h2 id="2，FLV-文件格式"><a href="#2，FLV-文件格式" class="headerlink" title="2，FLV 文件格式"></a>2，FLV 文件格式</h2><p>FLV（Flash Video）是现在非常流行的流媒体格式，由于其视频文件体积轻巧、封装播放简单等特点，使其很适合在网络上进行应用，目前主流的视频网站无一例外地使用了FLV格式。另外由于当前浏览器与Flash Player紧密的结合，使得网页播放FLV视频轻而易举，也是FLV流行的原因之一。</p>
 <p>FLV是流媒体封装格式，我们可以将其数据看为二进制字节流。总体上看，FLV包括文件头（File Header）和文件体（File Body）两部分，其中文件体由一系列的Tag及Tag Size对组成。</p>
-<h2 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h2><p><img src="flv-fmt-ani/total.png" alt=""></p>
-<h2 id="FLV-header"><a href="#FLV-header" class="headerlink" title="FLV header"></a>FLV header</h2><p><img src="flv-fmt-ani/header.png" alt="header"><br>FLV header总共9个字节，其具体含义如下表所示：</p>
+<h2 id="整体结构"><a href="#整体结构" class="headerlink" title="整体结构"></a>整体结构</h2><p><img src="/2020/03/12/flv-fmt-ani/total.png" alt></p>
+<h2 id="FLV-header"><a href="#FLV-header" class="headerlink" title="FLV header"></a>FLV header</h2><p><img src="/2020/03/12/flv-fmt-ani/header.png" alt="header"><br>FLV header总共9个字节，其具体含义如下表所示：</p>
 <table>
 <thead>
 <tr>
@@ -366,8 +366,8 @@
 </tr>
 </tbody></table>
 <h2 id="body"><a href="#body" class="headerlink" title="body"></a>body</h2><p>FLV header之后紧跟着就是body。body包含多个Tag ,共有3种tag ,ScriptTag , VideoTag, AudioTag </p>
-<p><img src="flv-fmt-ani/body.png" alt=""></p>
-<h3 id="ScriptTag"><a href="#ScriptTag" class="headerlink" title="ScriptTag"></a>ScriptTag</h3><p><img src="script" alt=""></p>
+<p><img src="/2020/03/12/flv-fmt-ani/body.png" alt></p>
+<h3 id="ScriptTag"><a href="#ScriptTag" class="headerlink" title="ScriptTag"></a>ScriptTag</h3><p><img src="/2020/03/12/flv-fmt-ani/script" alt></p>
 <table>
 <thead>
 <tr>
@@ -434,7 +434,7 @@
 <tr>
 <td align="center">1</td>
 <td align="center">Type</td>
-<td align="center"><br /> 0 = Number <br /> 1 = Boolean  <br /> 2 = String  <br /> 3 = Object  <br /> 4 = MovieClip (reserved, not supported)   <br />  5 = Null  <br />  6 = Undefined  <br /> 7 = Reference  <br /> 8 = ECMA array  <br />  9 = Object end marker  <br />  10 = Strict array   <br /> 11 = Date  <br /> 12 = Long string</td>
+<td align="center"><br> 0 = Number <br> 1 = Boolean  <br> 2 = String  <br> 3 = Object  <br> 4 = MovieClip (reserved, not supported)   <br>  5 = Null  <br>  6 = Undefined  <br> 7 = Reference  <br> 8 = ECMA array  <br>  9 = Object end marker  <br>  10 = Strict array   <br> 11 = Date  <br> 12 = Long string</td>
 </tr>
 <tr>
 <td align="center">1</td>
@@ -442,7 +442,7 @@
 <td align="center"></td>
 </tr>
 </tbody></table>
-<h3 id="VideoTag"><a href="#VideoTag" class="headerlink" title="VideoTag"></a>VideoTag</h3><p><img src="flv-fmt-ani/videotag.png" alt=""></p>
+<h3 id="VideoTag"><a href="#VideoTag" class="headerlink" title="VideoTag"></a>VideoTag</h3><p><img src="/2020/03/12/flv-fmt-ani/videotag.png" alt></p>
 <table>
 <thead>
 <tr>
@@ -514,7 +514,7 @@
 <tr>
 <td align="center">n</td>
 <td align="center">VideoData</td>
-<td align="center">如果CodecID=2，为H263VideoPacket；<br /> 如果CodecID=3，为ScreenVideopacket； <br /> 如果CodecID=4，为VP6FLVVideoPacket；<br /> 如果CodecID=5，为VP6FLVAlphaVideoPacket；<br /> 如果CodecID=6，为ScreenV2VideoPacket；<br /> 如果CodecID=7，为AVCVideoPacket；</td>
+<td align="center">如果CodecID=2，为H263VideoPacket；<br> 如果CodecID=3，为ScreenVideopacket； <br> 如果CodecID=4，为VP6FLVVideoPacket；<br> 如果CodecID=5，为VP6FLVAlphaVideoPacket；<br> 如果CodecID=6，为ScreenV2VideoPacket；<br> 如果CodecID=7，为AVCVideoPacket；</td>
 </tr>
 <tr>
 <td align="center">data</td>
@@ -522,7 +522,7 @@
 <td align="center">数据区</td>
 </tr>
 </tbody></table>
-<h3 id="AudioTag"><a href="#AudioTag" class="headerlink" title="AudioTag"></a>AudioTag</h3><p><img src="flv-fmt-ani/sudioTag.png" alt=""></p>
+<h3 id="AudioTag"><a href="#AudioTag" class="headerlink" title="AudioTag"></a>AudioTag</h3><p><img src="/2020/03/12/flv-fmt-ani/sudioTag.png" alt></p>
 <table>
 <thead>
 <tr>
@@ -584,12 +584,12 @@
 <tr>
 <td align="center">B4</td>
 <td align="center">音频格式</td>
-<td align="center">0 = PCM <br /> 2 = MP3 <br /> 10 = AAC <br /></td>
+<td align="center">0 = PCM <br> 2 = MP3 <br> 10 = AAC <br></td>
 </tr>
 <tr>
 <td align="center">B2</td>
 <td align="center">采样率</td>
-<td align="center">0 = 5.5 kHz <br /> 1 = 11 kHz <br /> 2 = 22 kHz <br /> 3 = 44 kHz</td>
+<td align="center">0 = 5.5 kHz <br> 1 = 11 kHz <br> 2 = 22 kHz <br> 3 = 44 kHz</td>
 </tr>
 <tr>
 <td align="center">B1</td>
@@ -599,7 +599,7 @@
 <tr>
 <td align="center">B1</td>
 <td align="center">声道</td>
-<td align="center">0 = Mono sound (单声道) <br /> 1 = Stereo sound （双声道）</td>
+<td align="center">0 = Mono sound (单声道) <br> 1 = Stereo sound （双声道）</td>
 </tr>
 <tr>
 <td align="center">data</td>

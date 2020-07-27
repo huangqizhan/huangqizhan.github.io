@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="iOS Block的理解本文内容主要参考https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;1ded480028ff Clang什么是Clang? Clang是C++编写的编译器。我们平常用代码写的任何程序，最终都会经过编译器转换成二进制代码。而Clang 则是支持 C++&#x2F;Objective-C&#x2F;Objective-C++的编译器。我们在做OC开发时，可能也会听说LLVM编译器，那么Clang和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="block">
+<meta property="og:url" content="http://yoursite.com/2019/09/14/block/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="iOS Block的理解本文内容主要参考https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;1ded480028ff Clang什么是Clang? Clang是C++编写的编译器。我们平常用代码写的任何程序，最终都会经过编译器转换成二进制代码。而Clang 则是支持 C++&#x2F;Objective-C&#x2F;Objective-C++的编译器。我们在做OC开发时，可能也会听说LLVM编译器，那么Clang和">
+<meta property="og:image" content="http://yoursite.com/2019/09/14/block/block/Clang_LLVM.png">
+<meta property="article:published_time" content="2019-09-14T13:50:48.000Z">
+<meta property="article:modified_time" content="2019-11-15T12:52:19.000Z">
+<meta property="article:author" content="hqz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/14/block/block/Clang_LLVM.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/14/block/"/>
+
+
+
+
+
+  <title>block | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/14/block/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">block</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-14T21:50:48+08:00">
+                2019-09-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="iOS-Block的理解"><a href="#iOS-Block的理解" class="headerlink" title="iOS Block的理解"></a>iOS Block的理解</h1><p>本文内容主要参考<a href="https://www.jianshu.com/p/1ded480028ff" target="_blank" rel="noopener">https://www.jianshu.com/p/1ded480028ff</a></p>
+<h2 id="Clang"><a href="#Clang" class="headerlink" title="Clang"></a>Clang</h2><p>什么是Clang? Clang是C++编写的编译器。我们平常用代码写的任何程序，最终都会经过编译器转换成二进制代码。而Clang 则是支持 C++/Objective-C/Objective-C++的编译器。我们在做OC开发时，可能也会听说LLVM编译器，那么Clang和LLVM之间是什么关系呢？ </p>
+<p><img src="block/Clang_LLVM.png" alt="Clang"></p>
+<p>Clang是编译器的前端，它会分析具体的编程语言，然后用于生成与机器无关的中间代码，而LLVM是编译器的后端，与具体的编程语言无关，而会分析具体的中间代码，最后生成符合对应的机器目标程序。</p>
+<p>这样拆分前端后端的好处在于，前后端可以独立替换，便于编译器的优化。  </p>
+<h2 id="Block的本质"><a href="#Block的本质" class="headerlink" title="Block的本质"></a>Block的本质</h2><p> 下面是一个最简单的block</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">^&#123;</span><br><span class="line">NSLog(@&quot;Hello&quot;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p> 其实，^{} 对于编译器Clang而言,仅仅是一个标记语言，Clang 会将其转化为一个C语言的结构体，其具体的内容是这样的。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">struct Block_literal_1 &#123;</span><br><span class="line">&#x2F;&#x2F; 第一部分. Block基本信息以及 invoke函数指针</span><br><span class="line">void *isa; &#x2F;&#x2F; initialized to &amp;__NSGlobalBlock__ or &amp;__NSMallocBlock__ or &amp;__NSStackBlock__  三种Block的指针类型</span><br><span class="line">int flags;</span><br><span class="line">int reserved;</span><br><span class="line">void (*invoke)(void *, ...); &#x2F;&#x2F; 调用方法的指针</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 第二部分. Block descriptor指针描述Block的信息</span><br><span class="line">struct Block_descriptor_1 &#123;</span><br><span class="line">unsigned long int reserved;         &#x2F;&#x2F; NULL</span><br><span class="line">unsigned long int size;         &#x2F;&#x2F; sizeof(struct Block_literal_1)</span><br><span class="line">&#x2F;&#x2F; optional helper functions</span><br><span class="line">void (*copy_helper)(void *dst, void *src);     &#x2F;&#x2F; IFF (1&lt;&lt;25)</span><br><span class="line">void (*dispose_helper)(void *src);             &#x2F;&#x2F; IFF (1&lt;&lt;25)</span><br><span class="line">&#x2F;&#x2F; required ABI.2010.3.16</span><br><span class="line">const char *signature;                         &#x2F;&#x2F; IFF (1&lt;&lt;30)</span><br><span class="line">&#125; *descriptor;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 第三部分. Block所截取的外部变量（如果有的话）</span><br><span class="line">&#x2F;&#x2F; imported variables</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+<p> Block 主要分成三大部分<br> 1 isa指针及invoke函数指针<br> 2 descriptor 指正 block 的指针描述<br> 3 block所截取的外部变量及自身的变量</p>
+<h2 id="block-的第一部分-isa-invoke"><a href="#block-的第一部分-isa-invoke" class="headerlink" title="block 的第一部分 isa , invoke"></a>block 的第一部分 isa , invoke</h2><h4 id="isa"><a href="#isa" class="headerlink" title="isa"></a>isa</h4><p> 当编译器编译结束之后isa会指向一个结构体的指针，主要有三种类型 NSGlobalBlock / NSStackBlock / NSMallocBlock 的指针</p>
+<ul>
+<li><p>当block中没有引用外部变量，或者引用全局变量，const标量 或 static 变量时 Block的isa会指向NSGloablBlock 。这时Block的生命周期会伴随程序的本身。 如以下的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static int a &#x3D; 1;</span><br><span class="line">const int b &#x3D; 2;</span><br><span class="line">NSLog(@&quot;type block &#x3D; %@&quot;,[^&#123;NSLog(@&quot;%d %d&quot;,a,b); &#125; class]);</span><br><span class="line">NSLog(@&quot;type block &#x3D; %@&quot;,[^&#123;NSLog(@&quot;block&quot;);&#125; class]);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当Block没有被变量引用 此时block的isa为NSStackBlock 内存由系统栈来分配</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int var &#x3D; 3;</span><br><span class="line">NSLog(@&quot;block &#x3D; %@&quot;,[^&#123;NSLog(@&quot;var &#x3D; %d&quot;,var);&#125; class]);</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<ul>
+<li>其余的block都是NSMallcoBlock 存储在堆上 跟OC对象的内存管理一致</li>
+</ul>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">self.block &#x3D; ^&#123;</span><br><span class="line">&#125;;</span><br><span class="line">self.block();</span><br><span class="line">void (^vblock)(void) &#x3D; ^&#123;</span><br><span class="line">&#125;;</span><br><span class="line">vblock();</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="invoke-invoke-指针会指向block对应的函数"><a href="#invoke-invoke-指针会指向block对应的函数" class="headerlink" title="invoke : invoke 指针会指向block对应的函数"></a>invoke : invoke 指针会指向block对应的函数</h3><p> 当编译器编译完之后block会生成一个结构体及一个函数  而invoke就会指向该函数</p>
+<p> 如下所示的block</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">^ &#123; printf(&quot;hello world\n&quot;); &#125;</span><br></pre></td></tr></table></figure>
+
+
+<p> 编译完之后就会生成如下所示的结构体</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">struct __block_literal_1 &#123;</span><br><span class="line">void *isa;</span><br><span class="line">int flags;</span><br><span class="line">int reserved;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 函数指针</span><br><span class="line">void (*invoke)(struct __block_literal_1 *);</span><br><span class="line">struct __block_descriptor_1 *descriptor;</span><br><span class="line">&#125;;</span><br><span class="line">&#x2F;&#x2F;&#x2F; invoke 指向的函数</span><br><span class="line">void __block_invoke_1(struct __block_literal_1 *_block) &#123;</span><br><span class="line">printf(&quot;hello world\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p> ##block 截取外部变量</p>
+<p> 重中之重 block是怎样截获外部变量的 大体可以分为以下几种类型</p>
+<ul>
+<li>全局变量 静态变量 常量</li>
+<li>基本数据类型</li>
+<li>NSObject 类型 （ 包括 block 类型 ）</li>
+<li>__block修饰的变量</li>
+</ul>
+<h3 id="全局变量-静态变量-常量"><a href="#全局变量-静态变量-常量" class="headerlink" title="全局变量 静态变量 常量"></a>全局变量 静态变量 常量</h3> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static int a &#x3D; 13;</span><br><span class="line">@implementation ViewController</span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">[super viewDidLoad];</span><br><span class="line">NSLog(@&quot;Outside Block, static int a address is %p&quot;, &amp;a);</span><br><span class="line">^&#123;</span><br><span class="line">NSLog(@&quot;Inside Block, static int a address is %p&quot;, &amp;a);</span><br><span class="line">&#125;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 输出结果为</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Outside Block, static int a address is 0x100e61104</span><br><span class="line">Inside Block, static int a address is 0x100e61104</span><br></pre></td></tr></table></figure>
+ <font color=red>
+ 结果显示变量的内存地址一样 block会持有静态变量的内存地址 。注意： 此处的block为NSGlobalBlock 全局block
+ </font>
+
+
+<h3 id="截取基本数据类型"><a href="#截取基本数据类型" class="headerlink" title="截取基本数据类型"></a>截取基本数据类型</h3> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int b &#x3D; 12;</span><br><span class="line">NSLog(@&quot;Outside Block, address of int b is %p&quot;, &amp;b);</span><br><span class="line">^&#123;</span><br><span class="line">NSLog(@&quot;Inside Block, address of int b is %p&quot;, &amp;b);</span><br><span class="line">&#125;();</span><br></pre></td></tr></table></figure>
+
+
+<p> 输出结果为</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Outside Block, address of int b is 0x7ffee191a4ec</span><br><span class="line">Inside Block, address of int b is 0x7ffee191a4e8</span><br></pre></td></tr></table></figure>
+ <font color=red>
+ 结果显示内存地址不一致，也就是说，基本数据类型会在Blcok中copy一份 block 里面跟外面完全是两个不同的变量
+ </font>
+
+
+<h3 id="NSObject-类型"><a href="#NSObject-类型" class="headerlink" title="NSObject 类型"></a>NSObject 类型</h3> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@interface MyObject : NSObject</span><br><span class="line">- (void)sayMyObjectAddress</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation MyObject</span><br><span class="line">- (void)sayMyObjectAddress &#123;</span><br><span class="line">NSLog(@&quot;Instance pointer address is %p, Instance address is %p&quot;, &amp;self, self);</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">MyObject *obj &#x3D; [MyObject new];</span><br><span class="line">[obj sayMyObjectAddress];</span><br><span class="line">^&#123;</span><br><span class="line">[obj sayMyObjectAddress];</span><br><span class="line">&#125;();</span><br></pre></td></tr></table></figure>
+
+<p> 输出结果如下</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Instance pointer address is 0x7ffee4562498, Instance address is 0x600001626650</span><br><span class="line">Instance pointer address is 0x7ffee4562478, Instance address is 0x600001626650</span><br></pre></td></tr></table></figure>
+
+ <font color=red>
+ 结果显示 指针不一样 但内存地址是一样的 。 所以当block截取到对象类型时只是浅拷贝 以及对象前面的所有权修饰符一同拷贝
+ </font>
+
+
+<p> 以上Block对变量的截取，都是在不被修改的前提下的  要想修改block之外的变量需用__block修饰</p>
+<h3 id="block修饰的变量"><a href="#block修饰的变量" class="headerlink" title="__block修饰的变量"></a>__block修饰的变量</h3><p> 先看一个例子</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__block int b &#x3D; 13;</span><br><span class="line">NSLog(@&quot;Outside Block, address of __block int b is %p, b &#x3D; %d&quot;, &amp;b, b);</span><br><span class="line">blockType1 blk &#x3D; ^&#123;</span><br><span class="line">b++;</span><br><span class="line">NSLog(@&quot;Inside Block, address of __block int b is %p, b &#x3D; %d&quot;, &amp;b, b);</span><br><span class="line">&#125;;</span><br><span class="line">blk();</span><br><span class="line">NSLog(@&quot;After Block, address of __block int b is %p, b &#x3D; %d&quot;, &amp;b, b);</span><br></pre></td></tr></table></figure>
+
+<p> 输出结果为</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Outside Block, address of __block int b is 0x7ffeeafd84e0, b &#x3D; 13</span><br><span class="line">Inside Block, address of __block int b is 0x6000034cc1f8, b &#x3D; 14</span><br><span class="line">After Block, address of __block int b is 0x6000034cc1f8, b</span><br></pre></td></tr></table></figure>
+
+
+
+ <font color=red>
+ 结果显示 ： 后面两次的打印的内存地址一样而且跟第一次的打印不同 。说明经过block 之后做了特殊的处理。
+ </font>
+
+
+<h3 id="block-修饰变量的原理"><a href="#block-修饰变量的原理" class="headerlink" title="__block 修饰变量的原理"></a>__block 修饰变量的原理</h3><p> <strong>当变量被__block修饰时 编译器对变量做了特殊的处理 变量被封装为一个结构体</strong></p>
+<p> 源码如下</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">__block int i &#x3D; 10;</span><br><span class="line"></span><br><span class="line">struct _block_byref_i &#123;</span><br><span class="line">void *isa;</span><br><span class="line">struct _block_byref_i *forwarding;</span><br><span class="line">int flags;   &#x2F;&#x2F;refcount;</span><br><span class="line">int size;</span><br><span class="line">int captured_i;  &#x2F;&#x2F;&#x2F; 捕获的变量</span><br><span class="line">&#125; i &#x3D; &#123; NULL, &amp;i, 0, sizeof(struct _block_byref_i), 10 &#125;;</span><br><span class="line"></span><br><span class="line">i.forwarding-&gt;captured_i &#x3D; 11;</span><br></pre></td></tr></table></figure>
+
+
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">[super viewDidLoad];</span><br><span class="line">__block MyObject *obj1 &#x3D; [MyObject new];</span><br><span class="line">NSLog(@&quot;obj1 &#x3D; %p %@&quot;,&amp;obj1,obj1);</span><br><span class="line">self.block &#x3D; ^&#123;</span><br><span class="line">NSLog(@&quot;obj1 &#x3D; %p %@&quot;,&amp;obj1,obj1);</span><br><span class="line">&#125;;</span><br><span class="line">NSLog(@&quot;obj1 &#x3D; %p %@&quot;,&amp;obj1,obj1);</span><br><span class="line">self.block();</span><br><span class="line">NSLog(@&quot;obj1 &#x3D; %p %@&quot;,&amp;obj1,obj1);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 输出结果</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">obj1 &#x3D; 0x7ffee51a4888 &lt;MyObject: 0x60000139bdd0&gt;</span><br><span class="line">obj1 &#x3D; 0x600001fd0d18 &lt;MyObject: 0x60000139bdd0&gt;</span><br><span class="line">obj1 &#x3D; 0x600001fd0d18 &lt;MyObject: 0x60000139bdd0&gt;</span><br><span class="line">obj1 &#x3D; 0x600001fd0d18 &lt;MyObject: 0x60000139bdd0&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p> <strong>可以看到  _block int i = 10 i 被改写为了struct _block_byref_i 结构体。这里有个关键的属性变量，forwarding，forwarding指向一个__block结构体。当block 在栈上时生成的结构体的forwarding指针会指向自己。当block 在堆上copy一份时，栈上的结构体和堆上的结构体的forwarding都会指向堆上的结构体。</strong>  </p>
+<h3 id="block-循环引用问题"><a href="#block-循环引用问题" class="headerlink" title="block 循环引用问题"></a>block 循环引用问题</h3><p>由于在编译之后block是以对象的方式处理的，所有block外面的变量经过block都会被block截取包括所有权的修饰符。此时如果block被某对象持有，而block又截取了该变量，或者间接的截取了该变量，就会发生循环引用。</p>
+<p>如下的代码就会发生循环引用  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">interface SecViewController ()</span><br><span class="line">@property (nonatomic,copy) void (^block)(void);</span><br><span class="line">@property (nonatomic,strong) NSMutableArray *array;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation SecViewController</span><br><span class="line"></span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    MyObject *obj &#x3D; [MyObject new];</span><br><span class="line">    _array &#x3D; [NSMutableArray new];</span><br><span class="line">    self.block &#x3D; ^&#123;</span><br><span class="line">        NSLog(@&quot;obj &#x3D; %@&quot;,obj);</span><br><span class="line">        NSLog(@&quot;array &#x3D; %@&quot;,_array); &#x2F;&#x2F;&#x2F; 此处相当于 self-&gt;_array;</span><br><span class="line">        &#x2F;&#x2F;&#x2F; NSLog(@&quot;self &#x3D; %@&quot;,self);</span><br><span class="line">    &#125;;</span><br><span class="line">    self.block();</span><br><span class="line">&#125;</span><br><span class="line">- (void)dealloc&#123;</span><br><span class="line">    NSLog(@&quot;vc dealloc&quot;);</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line">@implementation MyObject</span><br><span class="line">- (void)dealloc&#123;</span><br><span class="line">    NSLog(@&quot;dealloc&quot;);</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+<p>此处当前控制器持有block  block引用了当前控制器，所以当控制器退出导航栈时不会被析构 obj对象也不会被析构。</p>
+<p>修改一代吗如下  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">@interface SecViewController ()</span><br><span class="line">@property (nonatomic,copy) void (^block)(void);</span><br><span class="line">@property (nonatomic,strong) NSMutableArray *array;</span><br><span class="line">@end</span><br><span class="line">@implementation SecViewController</span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">    [super viewDidLoad];</span><br><span class="line">    MyObject *obj &#x3D; [MyObject new];</span><br><span class="line">    _array &#x3D; [NSMutableArray new];</span><br><span class="line">    __weak typeof(self) weakSelf &#x3D; self;</span><br><span class="line">    void(^block)(void) &#x3D; ^&#123;</span><br><span class="line">        NSLog(@&quot;obj &#x3D; %@&quot;,obj);</span><br><span class="line">        NSLog(@&quot;array &#x3D; %@&quot;,weakSelf.array);</span><br><span class="line">    &#125;;</span><br><span class="line">    block();</span><br><span class="line">&#125;</span><br><span class="line">- (void)dealloc&#123;</span><br><span class="line">    NSLog(@&quot;vc dealloc&quot;);</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br><span class="line">@implementation MyObject</span><br><span class="line">- (void)dealloc&#123;</span><br><span class="line">    NSLog(@&quot;dealloc&quot;);</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/03/app%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%BC%98%E5%8C%96/" rel="next" title="app启动流程及优化">
+                <i class="fa fa-chevron-left"></i> app启动流程及优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/10/thred-lock/" rel="prev" title="thred_lock">
+                thred_lock <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#iOS-Block的理解"><span class="nav-number">1.</span> <span class="nav-text">iOS Block的理解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Clang"><span class="nav-number">1.1.</span> <span class="nav-text">Clang</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Block的本质"><span class="nav-number">1.2.</span> <span class="nav-text">Block的本质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#block-的第一部分-isa-invoke"><span class="nav-number">1.3.</span> <span class="nav-text">block 的第一部分 isa , invoke</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#isa"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">isa</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#invoke-invoke-指针会指向block对应的函数"><span class="nav-number">1.3.1.</span> <span class="nav-text">invoke : invoke 指针会指向block对应的函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局变量-静态变量-常量"><span class="nav-number">1.3.2.</span> <span class="nav-text">全局变量 静态变量 常量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#截取基本数据类型"><span class="nav-number">1.3.3.</span> <span class="nav-text">截取基本数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSObject-类型"><span class="nav-number">1.3.4.</span> <span class="nav-text">NSObject 类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#block修饰的变量"><span class="nav-number">1.3.5.</span> <span class="nav-text">__block修饰的变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#block-修饰变量的原理"><span class="nav-number">1.3.6.</span> <span class="nav-text">__block 修饰变量的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#block-循环引用问题"><span class="nav-number">1.3.7.</span> <span class="nav-text">block 循环引用问题</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

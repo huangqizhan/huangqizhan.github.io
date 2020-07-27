@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo,Markdown," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="HTTPS介绍 超文本传输协议（Hypertext Transfer Protocol Secure）是一种安全的网络协议，在HTTP基础之上利用SSL&#x2F;TLS来加密数据包。 http属于引用层的协议 ，放置在传输协议TCP之上 ，HTTPS是在HTTP和TCP之间加上一层加密层。发送数据时这一层负责把http层的数据加密后送到TCP，接受数据时这一层负责将TCP传过来的数据解密成HTTP明文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTPS的理解">
+<meta property="og:url" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="HTTPS介绍 超文本传输协议（Hypertext Transfer Protocol Secure）是一种安全的网络协议，在HTTP基础之上利用SSL&#x2F;TLS来加密数据包。 http属于引用层的协议 ，放置在传输协议TCP之上 ，HTTPS是在HTTP和TCP之间加上一层加密层。发送数据时这一层负责把http层的数据加密后送到TCP，接受数据时这一层负责将TCP传过来的数据解密成HTTP明文">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/101810-4eab94916c2dc161.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/101810-3bc609bef1b24751.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/face_byte.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_link_normal.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_link_timeout.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_link_sure_lose.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_sure_latter_link.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/send_tcpbuffer.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/yongse_tcp.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/faseter_reset.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/resue_tcp.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/hhhhh.png">
+<meta property="article:published_time" content="2018-07-07T06:22:26.000Z">
+<meta property="article:modified_time" content="2019-11-28T13:32:05.000Z">
+<meta property="article:author" content="hqz">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="Markdown">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/101810-4eab94916c2dc161.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/07/文章标题/"/>
+
+
+
+
+
+  <title>HTTPS的理解 | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">HTTPS的理解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-07T14:22:26+08:00">
+                2018-07-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>HTTPS介绍</strong></p>
+<p>超文本传输协议（Hypertext Transfer Protocol Secure）是一种安全的网络协议，在HTTP基础之上利用SSL/TLS来加密数据包。</p>
+<p>http属于引用层的协议 ，放置在传输协议TCP之上 ，HTTPS是在HTTP和TCP之间加上一层加密层。发送数据时这一层负责把http层的数据加密后送到TCP，接受数据时这一层负责将TCP传过来的数据解密成HTTP明文  </p>
+<h3 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h3><h3 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h3><p><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/101810-4eab94916c2dc161.png" alt></p>
+<p><strong>HTTPS具体步骤</strong></p>
+<p><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/101810-3bc609bef1b24751.png" alt></p>
+<p><strong>1.客户端发起HTTPS请求</strong></p>
+<ol>
+<li><p>浏览器支持的SSL/TLS协议版本，比如TLS 1.0版。</p>
+</li>
+<li><p>一个浏览器客户端生成的随机数，稍后用于生成对称加密算法的”对话密钥”。</p>
+</li>
+<li><p>浏览器支持的各种加密方法，对称的，非对称的，HASH算法。比如RSA非对称加密算法，DES对称加密算法，SHA-1 hash算法。</p>
+</li>
+<li><p>浏览器支持的压缩方法。</p>
+</li>
+</ol>
+<p>####2.服务端收到客户端的请求 </p>
+<ol>
+<li><p>确认使用的加密通信协议版本，比如TLS 1.0版本。如果浏览器与服务器支持的版本不一致，服务器关闭加密通信。</p>
+</li>
+<li><p>一个服务器生成的随机数，稍后用于生成对称加密算法的”对话密钥”。</p>
+</li>
+<li><p>确认使用的各种加密方法，比如确认算法使用：RSA非对称加密算法，DES对称加密算法，SHA-1 hash算法</p>
+</li>
+<li><p>服务器证书。</p>
+</li>
+</ol>
+<p><strong>3.服务端返回证书</strong></p>
+<p><strong>4.客户端收到证书并且校验</strong>  </p>
+<p>客户端收到服务器回应以后，首先验证服务器证书。如果证书不是可信机构颁布、或者证书中的域名与实际域名不一致、或者证书已经过期，就会向访问者显示一个警告，由其选择是否还要继续通信。</p>
+<p>如果证书没有问题，客户端就会从证书中取出服务器的非对称加密算法的公钥。然后，向服务器发送下面三项信息</p>
+<ol>
+<li><p>一个随机数。该随机数用服务器发来的公钥进行的使用非对称加密算法加密，防止被窃听。</p>
+</li>
+<li><p>编码改变通知，表示随后的信息都将用双方商定的加密方法和密钥发送(比如确认使用：RSA非对称，DES对称，SHA-1 hash算法)。</p>
+</li>
+<li><p>客户端握手结束通知，表示客户端的握手阶段已经结束。这一项同时也是前面发送的所有内容的hash值，用来供服务器校验。</p>
+</li>
+</ol>
+<p><strong>5.服务器接收客户端发来的数据之后要做以下的操作</strong>  </p>
+<p>1.使用自己的私钥解密出随机数，然后用随机数解密握手信息 ，并验证HASH是否与客户端一致。</p>
+<p>服务器收到客户端的第三个随机数pre-master key之后，计算生成本次会话所用的对称加密算法的”会话密钥”。然后，向客户端最后发送下面信息。</p>
+<ol>
+<li><p>编码改变通知，表示随后的信息都将用双方商定的对称加密算法和密钥进行加密。</p>
+</li>
+<li><p>服务器握手结束通知，表示服务器的握手阶段已经结束。这一项同时也是前面发送的所有内容的hash值，用来供客户端校验。</p>
+</li>
+</ol>
+<p>至此，整个握手阶段全部结束。接下来，客户端与服务器进入加密通信，就完全是使用普通的HTTP协议，只不过用”会话密钥”加密内容。</p>
+<blockquote>
+<p>“不管是客户端还是服务器，都需要随机数，这样生成的密钥才不会每次都一样。由于SSL协议中证书是静态的，因此十分有必要引入一种随机因素来保证协商出来的密钥的随机性。</p>
+</blockquote>
+<blockquote>
+<p>对于RSA密钥交换算法来说，pre-master-key本身就是一个随机数，再加上hello消息中的随机，三个随机数通过一个密钥导出器最终导出一个对称密钥。</p>
+</blockquote>
+<blockquote>
+<p>pre master的存在在于SSL协议不信任每个主机都能产生完全随机的随机数，如果随机数不随机，那么pre master secret就有可能被猜出来，那么仅适用pre master secret作为密钥就不合适了，因此必须引入新的随机因素，那么客户端和服务器加上pre master secret三个随机数一同生成的密钥就不容易被猜出了，一个伪随机可能完全不随机，可是是三个伪随机就十分接近随机了，每增加一个自由度，随机性增加的 可不是一。”</p>
+</blockquote>
+<p><strong>参考资料</strong>  </p>
+<p><a href="https://www.cnblogs.com/digdeep/p/4832885.html" target="_blank" rel="noopener">凡是过去，皆是序幕</a></p>
+<h2 id="对TCP的理解"><a href="#对TCP的理解" class="headerlink" title="对TCP的理解"></a>对TCP的理解</h2><p>TCP是一种面向连接面向字节流的可靠的传输层的协议。</p>
+<h3 id="1面向连接"><a href="#1面向连接" class="headerlink" title="1面向连接"></a>1面向连接</h3><h5 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h5><ul>
+<li>客户端向服务端发送一个SYN同步报文。</li>
+<li>服务端收到SYN同步报文之后返回给客户端一个ACK响应报文。</li>
+<li>客户端收到ACK相应报文之后返回给服务端一个ACK响应报文。</li>
+</ul>
+<p><strong>为什么会是三次握手呢</strong><br>首先TCP是一个面向连接的协议，在传输数据之前必须要确定已经建立了稳定的连接，那么怎么样才算是稳定呢？<br><font color="black"><br>就是客户端和服务端彼此确认对方都有接受和发送数据的能力，也就是客户端要知道服务端有接受和发送数据的能力，服务端要知道客户端有发送和接受数据的能力。那么这就好理解了。</font></p>
+<ul>
+<li>第一次客户端发送SYN请求，只有服务端接收到了请求，才能表明服务端知道客户端有发送数据的能力。</li>
+<li>第二次服务端响应ACK报文，此时服务端已经知道客户端有发送数据的能力， 并且如果客户端收到了服务端的响应，则表明客户端知道了服务端有接受和发送数据的能力。<font color="red">
+（ 此时服务端还不知道客户端有接受数据的能力，所以还需要一次握手。）
+</font></li>
+<li>客户端再发送一次ACK请求报文，如果服务端收到了请求，则表明服务端已经知道了客户端有接受数据的能力。  
+
+</li>
+</ul>
+<h3 id="2面向字节流"><a href="#2面向字节流" class="headerlink" title="2面向字节流"></a>2面向字节流</h3><p><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/face_byte.png" alt><br>TCP把应用程序的数据看成是一连串的无结构的字节流。TCP在server端和客户端有一个缓冲，当应用程序传送的数据块太长，TCP就可以把它划分短一些再传送。如果应用程序一次只发送一个字节，TCP也可以等待积累有足够多的字节后再构成报文段发送出去。</p>
+<h3 id="3可靠传输"><a href="#3可靠传输" class="headerlink" title="3可靠传输"></a>3可靠传输</h3><ul>
+<li>无差错<br><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_link_normal.png" alt><br>正常情况下客户端每次发送一个报文，都会受到server端的一确认报文。<ul>
+<li>超时重传<br><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_link_timeout.png" alt><br>当客户端发送给server的M1报文超过一定的时间，没有达到server端时，客户端就会重新发送M1报文。</li>
+</ul>
+</li>
+<li>确认丢失<br><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_link_sure_lose.png" alt><br>客户端发送M1报文，server端收到之后，server发送的确认报文在途中丢失，超过一定的时间之后，客户端就会重新发送M1报文，server端再次收到M1报文之后，就会丢弃当前重传的M1报文，并且重新传给客户端M1的确认报文。</li>
+<li>确认迟到<br><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/tcp_sure_latter_link.png" alt><br>当上面的客户端一定时间之后收到了server端的延迟的确认报文后，此时M1报文已经被重新发送过了，所以就会对这个确认报文不做任何的处理。</li>
+</ul>
+<h3 id="4流量控制"><a href="#4流量控制" class="headerlink" title="4流量控制"></a>4流量控制</h3><p>流量控制主要依靠窗口滑动协议来实现，如下图所示发送端的示意图。<br><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/send_tcpbuffer.png" alt>  </p>
+<ul>
+<li>1-6个字节是已经发送的部分</li>
+<li>7-12个字节是已经发送但还没有收到server端确认的部分。</li>
+<li>13-19个字节是server端已经准备好但客户端还没有发送的部分，这一部分是由server端动态调整的。</li>
+<li>20-25个字节是还没有发送而且server端还没有真备好的部分。  </li>
+</ul>
+<p><strong>窗口滑动过程也就是传输的过程</strong>  </p>
+<p>假如7-12个字节是分为4次发送，分别为7-8，9-10，11，12，但server端只收到了7-8，9-10，12 三段，此时server端就只会返回7-8，9-10这两段的确认报文，只会保留12段的确认报文不会返回，当只有在收到11段的数据并且返回确认报文之后，才会返回12段的确认报文。因为TCP的确认机制是累计的，只使用一个数字来确认数据，这一数字是自上一次成功接收后的最长字节数。  </p>
+<p><strong>窗口滑动协议保证按需到达</strong><br> 当上面的1-8，9-10段的数据接收的确认报文之后，窗口的左边框就会向右移动，一直移动到已发送但还没有接收到确认报文的字节处。此时server端也会做相应的窗口移动处理，这就是窗口滑动协议。</p>
+<h3 id="5拥塞控制"><a href="#5拥塞控制" class="headerlink" title="5拥塞控制"></a>5拥塞控制</h3><p><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/yongse_tcp.png" alt>  </p>
+<h4 id="慢开始"><a href="#慢开始" class="headerlink" title="慢开始"></a>慢开始</h4><p>当主机开始发送数据时，如果立即把大量的数据字节注入到网络中，那么就有可能直接引入拥塞，因为现在不清楚网络中的负载情况，所以要由小到大增大发送窗口 。这部分成指数增长。为了防止发送量的增大引起的拥塞，还需设置一个慢开始门限，当超过这个门限就会执行拥塞避免算法。所以每经过一个有效的传输轮次，拥塞窗口就会加倍，直到超过慢开始门限。</p>
+<h4 id="拥塞避免"><a href="#拥塞避免" class="headerlink" title="拥塞避免"></a>拥塞避免</h4><p>当拥塞窗口超过慢开始门限是，就会执行拥塞避免算法，其思路是让拥塞窗口缓慢的增大，每经过一个往返时间就会增大1。<br><strong>但是 无论实在慢开始还是在拥塞阶段，只要发送发判断网络出现拥塞（有ACK超时）就会把慢开始门限设置为当前出现拥塞窗口的一般，然后将拥塞窗口重新设置为1，重新执行慢开始的算法。</strong></p>
+<h4 id="快重传"><a href="#快重传" class="headerlink" title="快重传"></a>快重传</h4><p>举例说明：现有M1,M2,M3,M4，M5,M6，6个报文要发送，当前时刻发送了M1,M2,M3,M4 ，但只收到了M1,M2的确认报文，M3的确认报文没有收到， 此时接收端收到M4，就会再立即发送一条M2的确认报文，接着继续发送M5,M6，接收方收到之后，也会再立即发送M2的确认报文，当发送端连续接收到3次M2的确认报文之后，就会立即重新传M3。注意：快重传是发生在超时时间之内，超时重传是发生在超时时间之内。</p>
+<h4 id="快恢复"><a href="#快恢复" class="headerlink" title="快恢复"></a>快恢复</h4><p><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/faseter_reset.png" alt><br>在上述发送端收到三次M2的确认报文之后，将拥塞窗口减半，然后开始执行拥塞避免的算法。</p>
+<h2 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h2><h3 id="无连接"><a href="#无连接" class="headerlink" title="无连接"></a>无连接</h3><p>UDP没有三次握手，四次挥手，不用连接直接发送。</p>
+<h3 id="面向报文-发送量没有限制"><a href="#面向报文-发送量没有限制" class="headerlink" title="面向报文 发送量没有限制"></a>面向报文 发送量没有限制</h3><p>不会像TCP一样，把数据进行分割，而是直接将应用层的数据进行包装之后，传向IP层。</p>
+<h2 id="传输层的份用和复用"><a href="#传输层的份用和复用" class="headerlink" title="传输层的份用和复用"></a>传输层的份用和复用</h2><p><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/resue_tcp.png" alt></p>
+<h2 id="DNS协议"><a href="#DNS协议" class="headerlink" title="DNS协议"></a>DNS协议</h2><p>DNS协议是属于应用层的协议，传输层使用的是UDP，属于明文传输，端口53。<br>防止DNS被劫持<br>1，httpDNS:当前客户端直接用http请求直接连接DNS服务器，来获取当前域名的IP。<br><img src="/2018/07/07/%E6%96%87%E7%AB%A0%E6%A0%87%E9%A2%98/hhhhh.png" alt><br>2，用TCP直接跟自己的服务器建立一长连接，可以用本地内网自己解析DNS。这样可以规避外网的DNS劫持。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          
+            <a href="/tags/Markdown/" rel="tag"># Markdown</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/07/article/" rel="prev" title="swift 学习记录">
+                swift 学习记录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie"><span class="nav-number">1.</span> <span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session"><span class="nav-number">2.</span> <span class="nav-text">Session</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对TCP的理解"><span class="nav-number"></span> <span class="nav-text">对TCP的理解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1面向连接"><span class="nav-number">1.</span> <span class="nav-text">1面向连接</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#三次握手"><span class="nav-number">1.0.1.</span> <span class="nav-text">三次握手</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2面向字节流"><span class="nav-number">2.</span> <span class="nav-text">2面向字节流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3可靠传输"><span class="nav-number">3.</span> <span class="nav-text">3可靠传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4流量控制"><span class="nav-number">4.</span> <span class="nav-text">4流量控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5拥塞控制"><span class="nav-number">5.</span> <span class="nav-text">5拥塞控制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#慢开始"><span class="nav-number">5.1.</span> <span class="nav-text">慢开始</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拥塞避免"><span class="nav-number">5.2.</span> <span class="nav-text">拥塞避免</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快重传"><span class="nav-number">5.3.</span> <span class="nav-text">快重传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快恢复"><span class="nav-number">5.4.</span> <span class="nav-text">快恢复</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP"><span class="nav-number"></span> <span class="nav-text">UDP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#无连接"><span class="nav-number">1.</span> <span class="nav-text">无连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向报文-发送量没有限制"><span class="nav-number">2.</span> <span class="nav-text">面向报文 发送量没有限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#传输层的份用和复用"><span class="nav-number"></span> <span class="nav-text">传输层的份用和复用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNS协议"><span class="nav-number"></span> <span class="nav-text">DNS协议</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="11年之前苹果是用MRC技术管理内存，之后采用的是ARC技术管理内存，14年推出的Swift 也是采用的是ARC 管理内存 。 不管是ARC还是MRC,都离不开引用计数 下面先了解一下什么是引用计数。 引用计数引用计数是一种管理对象生命周期的方式 ，当创建一个对象的时候，它的引用计数位1 ，当有新的执政指向这个对象时，引用计数就会加1，当某个指针不在指向这个对象时，该对象的引用计数就会减1 ，当对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 内存管理的理解">
+<meta property="og:url" content="http://yoursite.com/2018/11/02/memorymanager/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="11年之前苹果是用MRC技术管理内存，之后采用的是ARC技术管理内存，14年推出的Swift 也是采用的是ARC 管理内存 。 不管是ARC还是MRC,都离不开引用计数 下面先了解一下什么是引用计数。 引用计数引用计数是一种管理对象生命周期的方式 ，当创建一个对象的时候，它的引用计数位1 ，当有新的执政指向这个对象时，引用计数就会加1，当某个指针不在指向这个对象时，该对象的引用计数就会减1 ，当对">
+<meta property="og:image" content="http://yoursite.com/2018/11/02/memorymanager/memorymanager/266345-603f71c7d598f753.png">
+<meta property="article:published_time" content="2018-11-02T15:31:18.000Z">
+<meta property="article:modified_time" content="2019-11-16T13:06:53.000Z">
+<meta property="article:author" content="hqz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2018/11/02/memorymanager/memorymanager/266345-603f71c7d598f753.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/02/memorymanager/"/>
+
+
+
+
+
+  <title>iOS 内存管理的理解 | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/02/memorymanager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS 内存管理的理解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-02T23:31:18+08:00">
+                2018-11-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>11年之前苹果是用MRC技术管理内存，之后采用的是ARC技术管理内存，14年推出的Swift 也是采用的是ARC 管理内存 。 不管是ARC还是MRC,都离不开引用计数 下面先了解一下什么是引用计数。</p>
+<h1 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h1><p>引用计数是一种管理对象生命周期的方式 ，当创建一个对象的时候，它的引用计数位1 ，当有新的执政指向这个对象时，引用计数就会加1，当某个指针不在指向这个对象时，该对象的引用计数就会减1 ，当对象的引用计数为0时 ，说明这个对象不在被任何指针指向了，此时该对象就会销毁，内存回收。</p>
+<h1 id="为什么要使用引用计数"><a href="#为什么要使用引用计数" class="headerlink" title="为什么要使用引用计数"></a>为什么要使用引用计数</h1><ol>
+<li><p>不知道什么时候释放， 假如某一对象A生成了一个对象M, 需要调用B对象的某一方法，将对象M作为参数传递过去 在B对象中可能有个对象C调用C的方法将M传递过去 此时如果A,B,C三个对象都持有M对象 而且没有引用计数 ，此时M什么时候释放就会是一个问题。  </p>
+</li>
+<li><p>对于1中还会有另一中方式 就是M对象传到B中时复制一份，再传到C中时复制一份，当A,B,C都不需要M时，就销毁M对象 。这样就会造成严重的创建再销毁工作量。</p>
+</li>
+</ol>
+<h1 id="自动释放池-amp-RunLoop"><a href="#自动释放池-amp-RunLoop" class="headerlink" title="自动释放池 &amp; RunLoop"></a>自动释放池 &amp; RunLoop</h1><p>系统会自动为每个线程创建一个自动释放池， 如果开启了RunLoop 释放池会绑定当前线程的Runloop的回调方法    _wrapRunLoopWithAutoreleasePoolHandler()</p>
+<p><code>自动释放池跟RunLoop线程的关系</code></p>
+<blockquote>
+<p>第一个Observe 监听的事件是 RunLoop  即将进入状态Entry  优先级最高  自动释放池就会就会调用内部   _objc_autoreleasePoolPush()  是为了保证创建自动释放池在其他所有回调之前  </p>
+</blockquote>
+<blockquote>
+<p>第二个 Observer 监视了两个事件： BeforeWaiting(准备进入休眠) 时调用_objc_autoreleasePoolPop() 和 _objc_autoreleasePoolPush() 释放旧的池并创建新池；Exit(即将退出Loop) 时调用 _objc_autoreleasePoolPop() 来释放自动释放池。 优先级最低，保证其释放池子发生在其他所有回调之后。  </p>
+</blockquote>
+<p><code>自动释放池的使用</code>  </p>
+<blockquote>
+<p>MRC 下内存管理创建对象时需手动添加到自动释放池中 ， 对象的引用计数需手动管理 。添加自动释放池有两种方法  NSAutoReleasePool ,@autoreleasepool {}   </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;创建一个自动释放池</span><br><span class="line">NSAutoreleasePool *pool &#x3D; [[ NSAutoreleasePool alloc]init ];</span><br><span class="line">&#x2F;&#x2F;&#x2F;创建对象</span><br><span class="line">Person *person &#x3D; [[Person alloc]init];</span><br><span class="line">&#x2F;&#x2F;&#x2F;引用计数加1 </span><br><span class="line">[person retain]</span><br><span class="line">&#x2F;&#x2F;调autorelease方法将对象加入到自动释放池</span><br><span class="line">[person autorelease];</span><br><span class="line">&#x2F;&#x2F;手动释放自动释放池执行完这行代码是，自动释放池会对加入他中的对象做一次release操作</span><br><span class="line">[pool release];</span><br><span class="line"></span><br><span class="line">@autoreleasepool &#123;</span><br><span class="line">&#x2F;&#x2F;在这个&#123;&#125;之内的变量默认被添加到自动释放池</span><br><span class="line">Person *p &#x3D; [[Person alloc] init];</span><br><span class="line">&#125;&#x2F;&#x2F;出了这个括号，p被释放</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>ARC 下不管是主线程还是子线程都会自动将创建的对象添加到自动释放池中，而且不用手动管理引用计数 . 添加自动释放池 @autoreleasepool {}   不能使用NSAutoreleasePool  </p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F;ARC 下创建对象自动加入自动释放池 引用计数自动加1 </span><br><span class="line">Person *p &#x3D; [Person new];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@autoreleasepool &#123;</span><br><span class="line">&#x2F;&#x2F;在这个&#123;&#125;之内的变量默认被添加到自动释放池</span><br><span class="line">Person *p &#x3D; [[Person alloc] init];</span><br><span class="line">&#125;&#x2F;&#x2F;出了这个括号，p被释放</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;&#x2F;使用容器的block版本的枚举器的时候，系统会自动添加一个autoreleasePool</span><br><span class="line">[array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) &#123;</span><br><span class="line">&#x2F;&#x2F; 这里被一个局部@autoreleasepool包围着</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+<p><code>自动释放池的内部结构</code> </p>
+<blockquote>
+<p>每一个autorealeasePool对象都是由若干个autoreleasePoolPage(大小都是 4096 字节) 通过双向链表连接而成，类的定义如下   当对象调用 autorelease 方法时，会将对象加入 AutoreleasePoolPage 的栈中 AutoreleasePoolPage::push ，调用 AutoreleasePoolPage::pop 方法会向栈中的对象发送 release 消息.</p>
+</blockquote>
+<p><img src="memorymanager/266345-603f71c7d598f753.png" alt="双向链表"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class AutoreleasePoolPage </span><br><span class="line">&#123;</span><br><span class="line">    magic_t const magic;</span><br><span class="line">    &#x2F;&#x2F;指向栈顶最新被添加进来的autorelease对象的下一个位置</span><br><span class="line">    id *next;</span><br><span class="line">    &#x2F;&#x2F;指向当前线程</span><br><span class="line">    pthread_t const thread;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;上一个节点</span><br><span class="line">    AutoreleasePoolPage * const parent;</span><br><span class="line">    &#x2F;&#x2F;&#x2F;下一个节点</span><br><span class="line">    AutoreleasePoolPage *child;</span><br><span class="line">    uint32_t const depth;</span><br><span class="line">    uint32_t </span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">一个对象的销毁取决于AutorealeasePoolPage的释放 , AutoreleasePoolPage 的释放取决于AutoreleasePool ，AutoreleasePool的销毁取决于Runloop的回调</span><br></pre></td></tr></table></figure>
+<p>#weak </p>
+<blockquote>
+<p>弱引用的实现原理是这样，系统对于每一个有弱引用的对象，都维护一个表来记录它所有的弱引用的指针地址。这样，当一个对象的引用计数为 0 时，系统就通过这张表，找到所有的弱引用指针，继而把它们都置成 nil  </p>
+</blockquote>
+<blockquote>
+<p>Bib文件创建时 控件的内存管理是weak修饰 是因为收到内存警告时 可以销毁UI对象  </p>
+</blockquote>
+<p> <code>用NSThread/pthread创建的线程 需自己手动开启Runloop 并且自己管理内存</code></p>
+<blockquote>
+<p>根据自己的认知 GCD异步操作 是默认是开启RunLoop的 而且是ARC管理内存</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">dispatch_queue_t queue &#x3D; dispatch_queue_create(&quot;queueD&quot;, 0);</span><br><span class="line">dispatch_async(queue, ^&#123;</span><br><span class="line">    NSLog(@&quot;thread &#x3D; %@&quot;,[NSThread currentThread]);</span><br><span class="line">    Model *model &#x3D; [Model new];</span><br><span class="line">    NSLog(@&quot;model &#x3D; %@&quot;,model);</span><br><span class="line">    NSLog(@&quot;crunloop &#x3D; %@&quot;,[NSRunLoop currentRunLoop]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;&#x2F;</span><br><span class="line">thread &#x3D; &lt;NSThread: 0x6000033b81c0&gt;&#123;number &#x3D; 3, name &#x3D; (null)&#125;</span><br><span class="line">2019-08-03 23:55:54.848823+0800 ThreadD[40679:1136046] model &#x3D; &lt;Model: 0x6000024d86b0&gt;</span><br><span class="line">2019-08-03 23:55:54.850369+0800 ThreadD[40679:1136046] crunloop &#x3D; &lt;CFRunLoop 0x600001ad9400 [0x1097edae8]&gt;&#123;wakeup port &#x3D; 0x6003, stopped &#x3D; false, ignoreWakeUps &#x3D; true, </span><br><span class="line">current mode &#x3D; (none),</span><br><span class="line">common modes &#x3D; &lt;CFBasicHash 0x6000028efbd0 [0x1097edae8]&gt;&#123;type &#x3D; mutable set, count &#x3D; 1,</span><br><span class="line">entries &#x3D;&gt;</span><br><span class="line">	2 : &lt;CFString 0x1097fff48 [0x1097edae8]&gt;&#123;contents &#x3D; &quot;kCFRunLoopDefaultMode&quot;&#125;</span><br><span class="line">&#125;</span><br><span class="line">,</span><br><span class="line">common mode items &#x3D; (null),</span><br><span class="line">modes &#x3D; &lt;CFBasicHash 0x6000028efcf0 [0x1097edae8]&gt;&#123;type &#x3D; mutable set, count &#x3D; 1,</span><br><span class="line">entries &#x3D;&gt;</span><br><span class="line">	2 : &lt;CFRunLoopMode 0x600001dd88f0 [0x1097edae8]&gt;&#123;name &#x3D; kCFRunLoopDefaultMode, port set &#x3D; 0x6103, queue &#x3D; 0x6000008de400, source &#x3D; 0x6000008d7e80 (not fired), timer port &#x3D; 0x9e03, </span><br><span class="line">	sources0 &#x3D; (null),</span><br><span class="line">	sources1 &#x3D; (null),</span><br><span class="line">	observers &#x3D; (null),</span><br><span class="line">	timers &#x3D; (null),</span><br><span class="line">	currently 586540555 (162188123589400) &#x2F; soft deadline in: 1.84465819e+10 sec (@ -1) &#x2F; hard deadline in: 1.84465819e+10 sec (@ -1)</span><br><span class="line">&#125;,</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/12/swifttips/" rel="next" title="swift 学习记录">
+                <i class="fa fa-chevron-left"></i> swift 学习记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/12/Charles/" rel="prev" title="Charles">
+                Charles <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引用计数"><span class="nav-number">1.</span> <span class="nav-text">引用计数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要使用引用计数"><span class="nav-number">2.</span> <span class="nav-text">为什么要使用引用计数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自动释放池-amp-RunLoop"><span class="nav-number">3.</span> <span class="nav-text">自动释放池 &amp; RunLoop</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

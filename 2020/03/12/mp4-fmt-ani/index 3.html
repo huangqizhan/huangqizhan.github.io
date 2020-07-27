@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1，多媒体文件格式  MP4多媒体的文件格式（分装格式）跟多媒体的编码格式不一样。多媒体容器作为作为编码格式的载体，将编码的数据封装起来。多媒体格式一般有两种类型 ：存储类型和流媒体类型。 1 存储类型 (mp4, avi, mkv, rmvb, asf)2 流媒体类型 (flv, ts, 一般搭配的网络协议有 rtmp, http, hls)  2，MP4 文件格式mp4文件把字节流会分割成一块">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mp4 格式解析">
+<meta property="og:url" content="http://yoursite.com/2020/03/12/mp4-fmt-ani/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="1，多媒体文件格式  MP4多媒体的文件格式（分装格式）跟多媒体的编码格式不一样。多媒体容器作为作为编码格式的载体，将编码的数据封装起来。多媒体格式一般有两种类型 ：存储类型和流媒体类型。 1 存储类型 (mp4, avi, mkv, rmvb, asf)2 流媒体类型 (flv, ts, 一般搭配的网络协议有 rtmp, http, hls)  2，MP4 文件格式mp4文件把字节流会分割成一块">
+<meta property="og:image" content="http://yoursite.com/2020/03/12/mp4-fmt-ani/total.png">
+<meta property="article:published_time" content="2020-03-12T10:48:24.000Z">
+<meta property="article:modified_time" content="2020-03-12T10:50:33.421Z">
+<meta property="article:author" content="hqz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/12/mp4-fmt-ani/total.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/12/mp4-fmt-ani/"/>
+
+
+
+
+
+  <title>mp4 格式解析 | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/12/mp4-fmt-ani/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">mp4 格式解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-12T18:48:24+08:00">
+                2020-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1，多媒体文件格式-MP4"><a href="#1，多媒体文件格式-MP4" class="headerlink" title="1，多媒体文件格式  MP4"></a>1，多媒体文件格式  MP4</h2><p>多媒体的文件格式（分装格式）跟多媒体的编码格式不一样。多媒体容器作为作为编码格式的载体，将编码的数据封装起来。多媒体格式一般有两种类型 ：存储类型和流媒体类型。</p>
+<p>1 存储类型 (mp4, avi, mkv, rmvb, asf)<br>2 流媒体类型 (flv, ts, 一般搭配的网络协议有 rtmp, http, hls) </p>
+<h2 id="2，MP4-文件格式"><a href="#2，MP4-文件格式" class="headerlink" title="2，MP4 文件格式"></a>2，MP4 文件格式</h2><p>mp4文件把字节流会分割成一块一块的数据，也就是所谓的box ，每个模块的结构基本都是一定的 。模块间有串行排布也有嵌套排布。</p>
+<p><img src="/2020/03/12/mp4-fmt-ani/total.png" alt="大体结构"></p>
+<p><strong>一些概念</strong></p>
+<blockquote>
+<p>track :  表示一些sample的集合，对于媒体数据来说，track表示一个视频或音频序列。<br>一个MP4文件可以由多个track组成。<br>有很多种类的track，其中有三个最<br>  video track包含了视频sample;<br>  audio track包含了audiosample;<br>  hint track;<br>hint track  这个特殊的track并不包含媒体数据，而是包含了一些将其他数据track打包成流媒体的指示信息。</p>
+</blockquote>
+<blockquote>
+<p>sample<br> 对于非hint track来说，<br>         video sample即为一帧视频，或一组连续视频帧，<br>         audio sample即为一段连续的压缩音频，它们统称sample。<br>对于hint track，sample定义一个或多个流媒体包的格式。<br>它描述了一个流媒体服务器如何把文件中的媒体数据组成符合流媒体协议的数据包。<br>如果文件只是本地播放，可以忽略hint track，他们只与流媒体有关系。<br>    sample table  指明sampe时序和物理布局的表。<br>    chunk 一个track的几个sample组成的单元。</p>
+</blockquote>
+<p><strong>NOTE1</strong><br>一帧音频可以分解成多个音频sample，所以音频一般用sample作为单位，而不用帧。</p>
+<p><strong>NOTE2</strong><br>每个track会有一个或者多个sample descriptions。<br>track里面的每个sample通过引用关联到一个sample description。<br>这个sample descriptions定义了怎样解码这个sample，如使用什么解压缩算法。</p>
+<h2 id="3，文件开头的-ftyp"><a href="#3，文件开头的-ftyp" class="headerlink" title="3，文件开头的 ftyp"></a>3，文件开头的 ftyp</h2><p>该box应该被放在文件的最开始，指示该MP4文件应用的相关信息,有且只有1个，并且只能被包含在文件层，而不能被其他box包含。</p>
+<h2 id="3-0-mdat"><a href="#3-0-mdat" class="headerlink" title="3.0, mdat"></a>3.0, mdat</h2><p>媒体数据是存储在mdat box中，其中包含多个track, track中存储多个sample  但是如何解析这个box需要参考moov box。</p>
+<h2 id="3-1，moov"><a href="#3-1，moov" class="headerlink" title="3.1，moov"></a>3.1，moov</h2><p>该box包含了文件媒体的metadata信息，有且只有一个,一般情况下，“moov”会紧随“ftyp”出现。</p>
+<h3 id="3-1-3，moov-gt-mvhd"><a href="#3-1-3，moov-gt-mvhd" class="headerlink" title="3.1.3，moov -&gt; mvhd"></a>3.1.3，moov -&gt; mvhd</h3><table>
+<thead>
+<tr>
+<th align="center">字节</th>
+<th align="center">字节对应的字段</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4</td>
+<td align="center">box size</td>
+<td align="center">box大小</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">box type</td>
+<td align="center">box类型</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">version</td>
+<td align="center">box版本，0或1，一般为0</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">flags</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">creation time</td>
+<td align="center">创建时间（相对于UTC时间1904-01-01零点的秒数）</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">modification time</td>
+<td align="center">修改时间</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">time scale</td>
+<td align="center">文件媒体在1秒时间内的刻度值，可以理解为1秒长度的时间单元数 ffmpeg中的时间基</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">duration</td>
+<td align="center">该track的时间长度，用duration和time scale值可以计算track时长， track时长 = duration / time 比如, audio track: time scale =  8000, duration = 560128，时长为70.016，video track: time scale = 600, duration = 42000，时长为70</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">rate</td>
+<td align="center">推荐播放速率，高16位和低16位分别为小数点整数部分和小数部分，即[16.16] 格式，该值为1.0（0x00010000）表示正常前向播放</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">volume</td>
+<td align="center">音量</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">reserved</td>
+<td align="center">保留位</td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="center">matrix</td>
+<td align="center">预览时间；开始预览此文件的时间</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">preview duration</td>
+<td align="center">以time scale为单位，预览的duration</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">poster time</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">selection time</td>
+<td align="center">hhh</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">selection duration</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">current time</td>
+<td align="center">当前时间</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">next track id</td>
+<td align="center">下一个track使用的id号</td>
+</tr>
+</tbody></table>
+<h3 id="3-1-4-moov-gt-trak"><a href="#3-1-4-moov-gt-trak" class="headerlink" title="3.1.4,moov -&gt; trak"></a>3.1.4,moov -&gt; trak</h3><p>媒体信息数据区</p>
+<h4 id="3-1-4-1-moov-gt-trak-gt-tkhd"><a href="#3-1-4-1-moov-gt-trak-gt-tkhd" class="headerlink" title="3.1.4.1,moov -&gt; trak -&gt; tkhd"></a>3.1.4.1,moov -&gt; trak -&gt; tkhd</h4><table>
+<thead>
+<tr>
+<th align="center">字节</th>
+<th align="center">字节对应的字段</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4</td>
+<td align="center">box size</td>
+<td align="center">box大小</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">box type</td>
+<td align="center">box类型</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">version</td>
+<td align="center">box版本，0或1，一般为0。</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">flags</td>
+<td align="center">按位或操作结果值，预定义如下： 0x000001     track_enabled，否则该track不被播放； 0x000002 track_in_movie，表示该track在播放中被引用； 0x000004 track_in_preview，表示该track在预览时被引用。 一般该值为7，如果一个媒体所有track均未设置track_in_movie和track_in_preview，将被理解为所有track均设置了这两项；对于hint track，该值为0</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">creation time</td>
+<td align="center">创建时间</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">modification time</td>
+<td align="center">修改时间</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">track id</td>
+<td align="center">id号，不能重复且不能为0</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">reserved</td>
+<td align="center">保留位</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">duration</td>
+<td align="center">track的时间长度</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center">reserved</td>
+<td align="center">保留位</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">layer</td>
+<td align="center">视频层，默认为0，值小的在上层</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">alternate group</td>
+<td align="center">track分组信息，默认为0表示该track未与其他track有群组关系</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">volume</td>
+<td align="center">音量</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">reserved</td>
+<td align="center">保留位</td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="center">matrix</td>
+<td align="center">视频变换矩阵</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">width</td>
+<td align="center">宽度</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">height</td>
+<td align="center">高度</td>
+</tr>
+<tr>
+<td align="center">#### 3.1.4.2 ,moov -&gt; trak -&gt; media</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">mdia 描述了track媒体类型以及sample信息(如音频或视频)，</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h5 id="3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd"><a href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd" class="headerlink" title="3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd"></a>3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd</h5><table>
+<thead>
+<tr>
+<th align="center">字节</th>
+<th align="center">字节对应的字段</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4</td>
+<td align="center">box size</td>
+<td align="center">box大小</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">box type</td>
+<td align="center">box类型</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">version</td>
+<td align="center">box版本，0或1，一般为0。</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">flags</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">pre-defined</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">handler type</td>
+<td align="center">在media box中，该值为4个字符：“vide”— video track “soun”— audio track “hint”— hint track</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="center">reserved</td>
+<td align="center">保留位</td>
+</tr>
+<tr>
+<td align="center">不定</td>
+<td align="center">name</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h6 id="3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf"><a href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf" class="headerlink" title="3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf"></a>3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf</h6><p> “minf”存储了解释track媒体数据的handler-specific信息，media handler用这些信息将媒体时间映射到媒体数据并进行处理,与媒体类型以及解释媒体数据的media handler密切相关</p>
+<h6 id="3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf-gt-vmhd"><a href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf-gt-vmhd" class="headerlink" title="3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf -&gt;vmhd"></a>3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf -&gt;vmhd</h6><p>包含其他的定义视频媒体数据的特性。</p>
+<table>
+<thead>
+<tr>
+<th align="center">字节</th>
+<th align="center">字节对应的字段</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4</td>
+<td align="center">box size</td>
+<td align="center">box大小</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">box type</td>
+<td align="center">box类型</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">version</td>
+<td align="center">box版本，0或1，一般为0。</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">flags</td>
+<td align="center">这里总是0x000001</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">grapha mode</td>
+<td align="center">视频合成模式，为0时拷贝原始图像，否则与opcolor进行合成</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">handler type</td>
+<td align="center">在media box中，该值为4个字符：“vide”— video track “soun”— audio track “hint”— hint track</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">Opcolor</td>
+<td align="center">｛red，green，blue｝</td>
+</tr>
+</tbody></table>
+<h6 id="3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf-gt-smhd"><a href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf-gt-smhd" class="headerlink" title="3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf -&gt;smhd"></a>3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf -&gt;smhd</h6><p>包含其他的定义音频媒体数据的特性</p>
+<table>
+<thead>
+<tr>
+<th align="center">字节</th>
+<th align="center">字节对应的字段</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4</td>
+<td align="center">box size</td>
+<td align="center">box大小</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">box type</td>
+<td align="center">box类型</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">version</td>
+<td align="center">box版本，0或1，一般为0。</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">flags</td>
+<td align="center">这里总是0x000001</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">均衡</td>
+<td align="center">立体声平衡，[8.8] 格式值，一般为0，-1.0表示全部左声道，1.0表示全部右声道</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">保留位</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h6 id="3-1-4-2-1-moov-gt-trak-gt-media-gt-minf-gt-dinf-gt-dref"><a href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-minf-gt-dinf-gt-dref" class="headerlink" title="3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; minf -&gt;dinf -&gt; dref"></a>3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; minf -&gt;dinf -&gt; dref</h6><p>“dinf”解释如何定位媒体信息，是一个container box。<br>“dinf”一般包含一个“dref”，即data reference box；<br>“dref”下会包含若干个“url”或“urn”，这些box组成一个表，用来定位track数据。<br>简单的说，track可以被分成若干段，每一段都可以根据“url”或“urn”指向的地址来获取数据，<br>sample描述中会用这些片段的序号将这些片段组成一个完整的track。</p>
+<table>
+<thead>
+<tr>
+<th align="center">字节</th>
+<th align="center">字节对应的字段</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4</td>
+<td align="center">box size</td>
+<td align="center">box大小</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">box type</td>
+<td align="center">box类型</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">version</td>
+<td align="center">box版本，0或1，一般为0。</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">flags</td>
+<td align="center">这里总是0x000001</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">entry count</td>
+<td align="center">“url”或“urn”表的元素个数</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">“url”或“urn”列表</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<h6 id="3-1-4-2-2-moov-gt-trak-gt-media-gt-minf-gt-stbl"><a href="#3-1-4-2-2-moov-gt-trak-gt-media-gt-minf-gt-stbl" class="headerlink" title="3.1.4.2.2 ,moov -&gt; trak -&gt; media -&gt; minf -&gt; stbl"></a>3.1.4.2.2 ,moov -&gt; trak -&gt; media -&gt; minf -&gt; stbl</h6><p>stbl 包含了关于track中sample所有时间和位置的信息，以及sample的编解码等信息。<br>利用这个表，可以解释sample的时序、类型、大小以及在各自存储容器中的位置。<br>stbl 是一个container box，其子box包括：</p>
+<p>1, Sample Description Box（stsd）<br>  视频的编码类型、宽高、长度，音频的声道、采样等信息都会出现在这个box中。<br> sample description atom的类型是’stsd’，包含了一个sample description表。<br>根据不同的编码方案和存储数据的文件数目，</p>
+<table>
+<thead>
+<tr>
+<th align="center">字节</th>
+<th align="center">字节对应的字段</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4</td>
+<td align="center">尺寸</td>
+<td align="center">这个atom的字节数</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">类型</td>
+<td align="center">stsd</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">version</td>
+<td align="center">box版本，0或1，一般为0。</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">flags</td>
+<td align="center">这里总是0x000001</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">条目数目</td>
+<td align="center">sample descriptions的数目</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">“Sample description</td>
+<td align="center">不同的媒体类型有不同的sample description，但是每个sample description的前四个字段是相同的，包含以下的数据成员</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">尺寸</td>
+<td align="center">这个sample description的字节数</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">数据格式</td>
+<td align="center">存储数据的格式</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">保留</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">数据引用索引</td>
+<td align="center">利用这个索引可以检索与当前sample description关联的数据。数据引用存储在data reference atoms。</td>
+</tr>
+</tbody></table>
+<p>2, Time To Sample Box（stts） </p>
+<p>stts 存储了sample的duration，描述了sample时序的映射方法，我们通过它可以找到任何时间的sample。<br>“stts”可以包含一个压缩的表来映射时间和sample序号，用其他的表来提供每个sample的长度和指针。<br>表中每个条目提供了在同一个时间偏移量里面连续的sample序号，以及samples的偏移量。<br>递增这些偏移量，就可以建立一个完整的time to sample表。</p>
+<p>3, Sample To Chunk Box（stsc）</p>
+<p>用chunk组织sample可以方便优化数据获取，一个thunk包含一个或多个sample。<br>“stsc”中用一个表描述了sample与chunk的映射关系，查看这张表就可以找到包含指定sample的thunk，从而找到这个sample。</p>
+<p>4 Sample Size Box（stsz） </p>
+<p>“stsz” 定义了每个sample的大小，包含了媒体中全部sample的数目和一张给出每个sample大小的表。这个box相对来说体积是比较大的。<br>sample size atoms定义了每个sample的大小，它的类型是’stsz’，<br>包含了媒体中全部sample的数目和一张给出每个sample大小的表。<br>这样，媒体数据自身就可以没有边框的限制。</p>
+<p>5 Chunk Offset Box（stco）</p>
+<p>“stco”定义了每个thunk在媒体流中的位置。<br>位置有两种可能，32位的和64位的，后者对非常大的电影很有用。<br>在一个表中只会有一种可能，这个位置是在整个文件中的绝对位置，而不是在任何box中的，<br>这样做就可以直接在文件中找到媒体数据，而不用解释box。<br>需要注意的是一旦前面的box有了任何改变，这张表都要重新建立，因为位置信息已经改变了。</p>
+<p>6  Sync Sample Box（stss）<br>“stss”确定media中的关键帧。<br>对于压缩媒体数据，关键帧是一系列压缩序列的开始帧，其解压缩时不依赖以前的帧，而后续帧的解压缩将依赖于这个关键帧。<br>“stss”可以非常紧凑的标记媒体内的随机存取点，它包含一个sample序号表，<br>表内的每一项严格按照sample的序号排列，说明了媒体中的哪一个sample是关键帧。<br>如果此表不存在，说明每一个sample都是一个关键帧，是一个随机存取点。</p>
+<h2 id="3-2-，文件开头的-free"><a href="#3-2-，文件开头的-free" class="headerlink" title="3.2 ，文件开头的 free"></a>3.2 ，文件开头的 free</h2><p> “free”中的内容是无关紧要的，可以被忽略。该box被删除后，不会对播放产生任何影响</p>
+<h2 id="3-3-查找sample"><a href="#3-3-查找sample" class="headerlink" title="3.3 查找sample"></a>3.3 查找sample</h2><p>当播放一个视频或者一路流track 的时候 在对应的mdia下找到具体的解析信息<br>例如，如果要找第1秒的视频数据，time_scale 为600 过程如下： </p>
+<p>  1 检查Time To Sample Box（stts）得出每个sample的duration是40，从而得出需要寻找第600/40 = 15 要1秒开始播放 则  + 1 = 16个sample </p>
+<p>  2 检查 Chunk Offset Box（stco） 得到该sample属于第5个chunk的第一个sample，该chunk共有4个sample</p>
+<p>  3  检查chunkoffset atom找到第5个trunk的偏移量是20472</p>
+<p>  4   由于第16个sample是第5个trunk的第一个sample，所以不用检查sample size atom，trunk的偏移量即是该sample的偏移量20472。如果是这个trunk的第二个sample，则从sample size atom中找到该trunk的前一个sample的大小，然后加上偏移量即可得到实际位置。</p>
+<p>  5 得到位置后，即可取出相应数据进行解码，播放 </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/12/flv-fmt-ani/" rel="next" title="flv 格式解析">
+                <i class="fa fa-chevron-left"></i> flv 格式解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/12/media-sumery/" rel="prev" title="media 常用概念收集">
+                media 常用概念收集 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1，多媒体文件格式-MP4"><span class="nav-number">1.</span> <span class="nav-text">1，多媒体文件格式  MP4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2，MP4-文件格式"><span class="nav-number">2.</span> <span class="nav-text">2，MP4 文件格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3，文件开头的-ftyp"><span class="nav-number">3.</span> <span class="nav-text">3，文件开头的 ftyp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-0-mdat"><span class="nav-number">4.</span> <span class="nav-text">3.0, mdat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1，moov"><span class="nav-number">5.</span> <span class="nav-text">3.1，moov</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-3，moov-gt-mvhd"><span class="nav-number">5.1.</span> <span class="nav-text">3.1.3，moov -&gt; mvhd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-4-moov-gt-trak"><span class="nav-number">5.2.</span> <span class="nav-text">3.1.4,moov -&gt; trak</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-4-1-moov-gt-trak-gt-tkhd"><span class="nav-number">5.2.1.</span> <span class="nav-text">3.1.4.1,moov -&gt; trak -&gt; tkhd</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd"><span class="nav-number">5.2.1.1.</span> <span class="nav-text">3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf"><span class="nav-number">5.2.1.1.1.</span> <span class="nav-text">3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf-gt-vmhd"><span class="nav-number">5.2.1.1.2.</span> <span class="nav-text">3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf -&gt;vmhd</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-mdhd-gt-minf-gt-smhd"><span class="nav-number">5.2.1.1.3.</span> <span class="nav-text">3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; mdhd -&gt;minf -&gt;smhd</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-4-2-1-moov-gt-trak-gt-media-gt-minf-gt-dinf-gt-dref"><span class="nav-number">5.2.1.1.4.</span> <span class="nav-text">3.1.4.2.1 ,moov -&gt; trak -&gt; media -&gt; minf -&gt;dinf -&gt; dref</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-4-2-2-moov-gt-trak-gt-media-gt-minf-gt-stbl"><span class="nav-number">5.2.1.1.5.</span> <span class="nav-text">3.1.4.2.2 ,moov -&gt; trak -&gt; media -&gt; minf -&gt; stbl</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-，文件开头的-free"><span class="nav-number">6.</span> <span class="nav-text">3.2 ，文件开头的 free</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-查找sample"><span class="nav-number">7.</span> <span class="nav-text">3.3 查找sample</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

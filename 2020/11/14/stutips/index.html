@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="FFmpeg 学习记录 - 时间参考文档 https:&#x2F;&#x2F;www.cnblogs.com&#x2F;leisure_chn&#x2F;p&#x2F;10584910.html 帧 I帧  I帧(Intra-coded picture, 帧内编码帧，常称为关键帧)包含一幅完整的图像信息，属于帧内编码图像，不含运动矢量，在解码时不需要参考其他帧图像。因此在I帧图像处可以切换频道，而不会导致图像丢失或无法解码。I帧图像用于阻止误差的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="stutips">
+<meta property="og:url" content="http://yoursite.com/2020/11/14/stutips/index.html">
+<meta property="og:site_name" content="Hqz_Blog">
+<meta property="og:description" content="FFmpeg 学习记录 - 时间参考文档 https:&#x2F;&#x2F;www.cnblogs.com&#x2F;leisure_chn&#x2F;p&#x2F;10584910.html 帧 I帧  I帧(Intra-coded picture, 帧内编码帧，常称为关键帧)包含一幅完整的图像信息，属于帧内编码图像，不含运动矢量，在解码时不需要参考其他帧图像。因此在I帧图像处可以切换频道，而不会导致图像丢失或无法解码。I帧图像用于阻止误差的">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/decode_order.jpg">
+<meta property="article:published_time" content="2020-11-14T12:29:09.000Z">
+<meta property="article:modified_time" content="2020-11-16T14:12:38.674Z">
+<meta property="article:author" content="hqz">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/decode_order.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/11/14/stutips/"/>
+
+
+
+
+
+  <title>stutips | Hqz_Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hqz_Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">点点滴滴</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/14/stutips/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="hqz">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hqz_Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">stutips</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-11-14T20:29:09+08:00">
+                2020-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="FFmpeg-学习记录-时间"><a href="#FFmpeg-学习记录-时间" class="headerlink" title="FFmpeg 学习记录 - 时间"></a>FFmpeg 学习记录 - 时间</h1><p>参考文档 <a href="https://www.cnblogs.com/leisure_chn/p/10584910.html" target="_blank" rel="noopener">https://www.cnblogs.com/leisure_chn/p/10584910.html</a></p>
+<h2 id="帧"><a href="#帧" class="headerlink" title="帧"></a>帧</h2><ul>
+<li>I帧  I帧(Intra-coded picture, 帧内编码帧，常称为关键帧)包含一幅完整的图像信息，属于帧内编码图像，不含运动矢量，在解码时不需要参考其他帧图像。因此在I帧图像处可以切换频道，而不会导致图像丢失或无法解码。I帧图像用于阻止误差的累积和扩散。在闭合式GOP中，每个GOP的第一个帧一定是I帧，且当前GOP的数据不会参考前后GOP的数据。</li>
+<li>P帧  P帧(Predictive-coded picture, 预测编码图像帧)是帧间编码帧，利用之前的I帧或P帧进行预测编码。</li>
+<li>B帧  B帧(Bi-directionally predicted picture, 双向预测编码图像帧)是帧间编码帧，利用之前和(或)之后的I帧或P帧进行双向预测编码。B帧不可以作为参考帧。<br>B帧具有更高的压缩率，但需要更多的缓冲时间以及更高的CPU占用率，因此B帧适合本地存储以及视频点播，而不适用对实时性要求较高的直播系统。</li>
+</ul>
+<h2 id="DTS-PTS"><a href="#DTS-PTS" class="headerlink" title="DTS PTS"></a>DTS PTS</h2><p>DTS(Decoding Time Stamp, 解码时间戳)，表示压缩帧的解码时间。<br>PTS(Presentation Time Stamp, 显示时间戳)，表示将压缩帧解码后得到的原始帧的显示时间。<br>音频中DTS和PTS是相同的。视频中由于B帧需要双向预测，B帧依赖于其前和其后的帧，因此含B帧的视频解码顺序与显示顺序不同，即DTS与PTS不同。当然，不含B帧的视频，其DTS和PTS是相同的。下图以一个开放式GOP示意图为例，说明视频流的解码顺序和显示顺序<br><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/decode_order.jpg" alt="sf"></p>
+<p><strong>采集顺序</strong> 指图像传感器采集原始信号得到图像帧的顺序。<br><strong>编码顺序</strong>指编码器编码后图像帧的顺序。存储到磁盘的本地视频文件中图像帧的顺序与编码顺序相同。<br><strong>传输顺序</strong>指编码后的流在网络中传输过程中图像帧的顺序。<br><strong>解码顺序</strong>指解码器解码图像帧的顺序。<br><strong>显示顺序</strong>指图像帧在显示器上显示的顺序。<br><strong>采集顺序</strong>与显示顺序相同。编码顺序、传输顺序和解码顺序相同。</p>
+<h2 id="ffmpeg-FFmpeg中的时间基与时间戳"><a href="#ffmpeg-FFmpeg中的时间基与时间戳" class="headerlink" title="ffmpeg  FFmpeg中的时间基与时间戳"></a>ffmpeg  FFmpeg中的时间基与时间戳</h2><h3 id="时间基与时间戳的概念"><a href="#时间基与时间戳的概念" class="headerlink" title="时间基与时间戳的概念"></a>时间基与时间戳的概念</h3><p>在FFmpeg中，时间基(time_base)是时间戳(timestamp)的单位，时间戳值乘以时间基，可以得到实际的时刻值(以秒等为单位)。例如，如果一个视频帧的dts是40，pts是160，其time_base是1/1000秒，那么可以计算出此视频帧的解码时刻是40毫秒(40/1000)，显示时刻是160毫秒(160/1000)。FFmpeg中时间戳(pts/dts)的类型是int64_t类型，把一个time_base看作一个时钟脉冲，则可把dts/pts看作时钟脉冲的计数。</p>
+<h3 id="三种时间基tbr、tbn和tbc"><a href="#三种时间基tbr、tbn和tbc" class="headerlink" title="三种时间基tbr、tbn和tbc"></a>三种时间基tbr、tbn和tbc</h3><p>不同的封装格式具有不同的时间基。在FFmpeg处理音视频过程中的不同阶段，也会采用不同的时间基。<br>FFmepg中有三种时间基，命令行中tbr、tbn和tbc的打印值就是这三种时间基的倒数：<br>tbn：对应容器中的时间基。值是AVStream.time_base的倒数<br>tbc：对应编解码器中的时间基。值是AVCodecContext.time_base的倒数<br>tbr：从视频流中猜算得到，可能是帧率或场率(帧率的2倍)</p>
+<p>使用ffprobe探测媒体文件格式，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">think@opensuse&gt; ffprobe tnmil3.flv </span><br><span class="line">ffprobe version 4.1 Copyright (c) 2007-2018 the FFmpeg developers</span><br><span class="line">Input #0, flv, from &#39;tnmil3.flv&#39;:</span><br><span class="line">  Metadata:</span><br><span class="line">    encoder         : Lavf58.20.100</span><br><span class="line">  Duration: 00:00:03.60, start: 0.017000, bitrate: 513 kb&#x2F;s</span><br><span class="line">    Stream #0:0: Video: h264 (High), yuv420p(progressive), 784x480, 25 fps, 25 tbr, 1k tbn, 50 tbc</span><br><span class="line">    Stream #0:1: Audio: aac (LC), 44100 Hz, stereo, fltp, 128 kb&#x2F;s</span><br></pre></td></tr></table></figure>
+
+<h3 id="内部时间基AV-TIME-BASE"><a href="#内部时间基AV-TIME-BASE" class="headerlink" title="内部时间基AV_TIME_BASE"></a>内部时间基AV_TIME_BASE</h3><p>除以上三种时间基外，FFmpeg还有一个内部时间基AV_TIME_BASE(以及分数形式的AV_TIME_BASE_Q)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Internal time base represented as integer</span><br><span class="line">#define AV_TIME_BASE            1000000</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Internal time base represented as fractional value</span><br><span class="line">#define AV_TIME_BASE_Q          (AVRational)&#123;1, AV_TIME_BASE&#125;</span><br></pre></td></tr></table></figure>
+<p>AV_TIME_BASE及AV_TIME_BASE_Q用于FFmpeg内部函数处理，使用此时间基计算得到时间值表示的是微秒。</p>
+<h3 id="时间值形式转换"><a href="#时间值形式转换" class="headerlink" title="时间值形式转换"></a>时间值形式转换</h3><p>av_q2d()将时间从AVRational形式转换为double形式。AVRational是分数类型，double是双精度浮点数类型，转换的结果单位是秒。转换前后的值基于同一时间基，仅仅是数值的表现形式不同而已。</p>
+<p>av_q2d()实现如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Convert an AVRational to a &#96;double&#96;.</span><br><span class="line"> * @param a AVRational to convert</span><br><span class="line"> * @return &#96;a&#96; in floating-point form</span><br><span class="line"> * @see av_d2q()</span><br><span class="line"> *&#x2F;</span><br><span class="line">static inline double av_q2d(AVRational a)&#123;</span><br><span class="line">    return a.num &#x2F; (double) a.den;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>av_q2d()使用方法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">AVStream stream;</span><br><span class="line">AVPacket packet;</span><br><span class="line">packet播放时刻值：timestamp(单位秒) &#x3D; packet.pts × av_q2d(stream.time_base);</span><br><span class="line">packet播放时长值：duration(单位秒) &#x3D; packet.duration × av_q2d(stream.time_base);</span><br></pre></td></tr></table></figure>
+<h3 id="时间基转换函数"><a href="#时间基转换函数" class="headerlink" title="时间基转换函数"></a>时间基转换函数</h3><p>av_rescale_q()用于不同时间基的转换，用于将时间值从一种时间基转换为另一种时间基。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Rescale a 64-bit integer by 2 rational numbers.</span><br><span class="line"> *</span><br><span class="line"> * The operation is mathematically equivalent to &#96;a × bq &#x2F; cq&#96;.</span><br><span class="line"> *</span><br><span class="line"> * This function is equivalent to av_rescale_q_rnd() with #AV_ROUND_NEAR_INF.</span><br><span class="line"> *</span><br><span class="line"> * @see av_rescale(), av_rescale_rnd(), av_rescale_q_rnd()</span><br><span class="line"> *&#x2F;</span><br><span class="line">int64_t av_rescale_q(int64_t a, AVRational bq, AVRational cq) av_const;</span><br></pre></td></tr></table></figure>
+<p>av_packet_rescale_ts()用于将AVPacket中各种时间值从一种时间基转换为另一种时间基。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * Convert valid timing fields (timestamps &#x2F; durations) in a packet from one</span><br><span class="line"> * timebase to another. Timestamps with unknown values (AV_NOPTS_VALUE) will be</span><br><span class="line"> * ignored.</span><br><span class="line"> *</span><br><span class="line"> * @param pkt packet on which the conversion will be performed</span><br><span class="line"> * @param tb_src source timebase, in which the timing fields in pkt are</span><br><span class="line"> *               expressed</span><br><span class="line"> * @param tb_dst destination timebase, to which the timing fields will be</span><br><span class="line"> *               converted</span><br><span class="line"> *&#x2F;</span><br><span class="line">void av_packet_rescale_ts(AVPacket *pkt, AVRational tb_src, AVRational tb_dst);</span><br></pre></td></tr></table></figure>
+
+<h3 id="转封装过程中的时间基转换"><a href="#转封装过程中的时间基转换" class="headerlink" title="转封装过程中的时间基转换"></a>转封装过程中的时间基转换</h3><p>AVStream.time_base是AVPacket中pts和dts的时间单位，输入流与输出流中time_base按如下方式确定：<br>对于输入流：打开输入文件后，调用avformat_find_stream_info()可获取到每个流中的time_base<br>对于输出流：打开输出文件后，调用avformat_write_header()可根据输出文件封装格式确定每个流的time_base并写入输出文件中</p>
+<p>不同封装格式具有不同的时间基，在转封装(将一种封装格式转换为另一种封装格式)过程中，时间基转换相关代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">av_read_frame(ifmt_ctx, &amp;pkt);</span><br><span class="line">pkt.pts &#x3D; av_rescale_q_rnd(pkt.pts, in_stream-&gt;time_base, out_stream-&gt;time_base, AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX);</span><br><span class="line">pkt.dts &#x3D; av_rescale_q_rnd(pkt.dts, in_stream-&gt;time_base, out_stream-&gt;time_base, AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX);</span><br><span class="line">pkt.duration &#x3D; av_rescale_q(pkt.duration, in_stream-&gt;time_base, out_stream-&gt;time_base);</span><br></pre></td></tr></table></figure>
+
+<p>下面的代码具有和上面代码相同的效果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 从输入文件中读取packet</span><br><span class="line">av_read_frame(ifmt_ctx, &amp;pkt);</span><br><span class="line">&#x2F;&#x2F; 将packet中的各时间值从输入流封装格式时间基转换到输出流封装格式时间基</span><br><span class="line">av_packet_rescale_ts(&amp;pkt, in_stream-&gt;time_base, out_stream-&gt;time_base);</span><br></pre></td></tr></table></figure>
+
+<p>这里流里的时间基in_stream-&gt;time_base和out_stream-&gt;time_base，是容器中的时间基</p>
+<p>例如，flv封装格式的time_base为{1,1000}，ts封装格式的time_base为{1,90000}<br>我们编写程序将flv封装格式转换为ts封装格式，抓取原文件(flv)的前四帧显示时间戳：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">think@opensuse&gt; ffprobe -show_frames -select_streams v tnmil3.flv | grep pkt_pts  </span><br><span class="line">ffprobe version 4.1 Copyright (c) 2007-2018 the FFmpeg developers</span><br><span class="line">Input #0, flv, from &#39;tnmil3.flv&#39;:</span><br><span class="line">  Metadata:</span><br><span class="line">    encoder         : Lavf58.20.100</span><br><span class="line">  Duration: 00:00:03.60, start: 0.017000, bitrate: 513 kb&#x2F;s</span><br><span class="line">    Stream #0:0: Video: h264 (High), yuv420p(progressive), 784x480, 25 fps, 25 tbr, 1k tbn, 50 tbc</span><br><span class="line">    Stream #0:1: Audio: aac (LC), 44100 Hz, stereo, fltp, 128 kb&#x2F;s</span><br><span class="line">pkt_pts&#x3D;80</span><br><span class="line">pkt_pts_time&#x3D;0.080000</span><br><span class="line">pkt_pts&#x3D;120</span><br><span class="line">pkt_pts_time&#x3D;0.120000</span><br><span class="line">pkt_pts&#x3D;160</span><br><span class="line">pkt_pts_time&#x3D;0.160000</span><br><span class="line">pkt_pts&#x3D;200</span><br><span class="line">pkt_pts_time&#x3D;0.200000</span><br></pre></td></tr></table></figure>
+<p>再抓取转换的文件(ts)的前四帧显示时间戳：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">think@opensuse&gt; ffprobe -show_frames -select_streams v tnmil3.ts | grep pkt_pts  </span><br><span class="line">ffprobe version 4.1 Copyright (c) 2007-2018 the FFmpeg developers</span><br><span class="line">Input #0, mpegts, from &#39;tnmil3.ts&#39;:</span><br><span class="line">  Duration: 00:00:03.58, start: 0.017000, bitrate: 619 kb&#x2F;s</span><br><span class="line">  Program 1 </span><br><span class="line">    Metadata:</span><br><span class="line">      service_name    : Service01</span><br><span class="line">      service_provider: FFmpeg</span><br><span class="line">    Stream #0:0[0x100]: Video: h264 (High) ([27][0][0][0] &#x2F; 0x001B), yuv420p(progressive), 784x480, 25 fps, 25 tbr, 90k tbn, 50 tbc</span><br><span class="line">    Stream #0:1[0x101]: Audio: aac (LC) ([15][0][0][0] &#x2F; 0x000F), 44100 Hz, stereo, fltp, 127 kb&#x2F;s</span><br><span class="line">pkt_pts&#x3D;7200</span><br><span class="line">pkt_pts_time&#x3D;0.080000</span><br><span class="line">pkt_pts&#x3D;10800</span><br><span class="line">pkt_pts_time&#x3D;0.120000</span><br><span class="line">pkt_pts&#x3D;14400</span><br><span class="line">pkt_pts_time&#x3D;0.160000</span><br><span class="line">pkt_pts&#x3D;18000</span><br><span class="line">pkt_pts_time&#x3D;0.200000</span><br></pre></td></tr></table></figure>
+<p>pts 是一当前时间基为基础计算出的数值 ，而pkt_pts_time 是当前帧的时间刻度<br>对于同一个视频帧，它们时间基(tbn)不同因此时间戳(pkt_pts)也不同，但是计算出来的时刻值(pkt_pts_time)是相同的。<br>看第一帧的时间戳，计算关系：80×{1,1000} == 7200×{1,90000} == 0.080000</p>
+<h2 id="转码过程中的时间基转换"><a href="#转码过程中的时间基转换" class="headerlink" title="转码过程中的时间基转换"></a>转码过程中的时间基转换</h2><h3 id="视频解码"><a href="#视频解码" class="headerlink" title="视频解码"></a>视频解码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">AVFormatContext *ifmt_ctx;</span><br><span class="line">AVStream *in_stream;</span><br><span class="line">AVCodecContext *dec_ctx;</span><br><span class="line">AVPacket packet;</span><br><span class="line">AVFrame *frame;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 从输入文件中读取编码帧</span><br><span class="line">av_read_frame(ifmt_ctx, &amp;packet);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 时间基转换</span><br><span class="line">int raw_video_time_base &#x3D; av_inv_q(dec_ctx-&gt;framerate);</span><br><span class="line">av_packet_rescale_ts(packet, in_stream-&gt;time_base, raw_video_time_base);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 解码</span><br><span class="line">avcodec_send_packet(dec_ctx, packet)</span><br><span class="line">avcodec_receive_frame(dec_ctx, frame);</span><br></pre></td></tr></table></figure>
+<h3 id="视频编码"><a href="#视频编码" class="headerlink" title="视频编码"></a>视频编码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">AVFormatContext *ofmt_ctx;</span><br><span class="line">AVStream *out_stream;</span><br><span class="line">AVCodecContext *dec_ctx;</span><br><span class="line">AVCodecContext *enc_ctx;</span><br><span class="line">AVPacket packet;</span><br><span class="line">AVFrame *frame;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 编码</span><br><span class="line">avcodec_send_frame(enc_ctx, frame);</span><br><span class="line">avcodec_receive_packet(enc_ctx, packet);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 时间基转换</span><br><span class="line">packet.stream_index &#x3D; out_stream_idx;</span><br><span class="line">enc_ctx-&gt;time_base &#x3D; av_inv_q(dec_ctx-&gt;framerate);</span><br><span class="line">av_packet_rescale_ts(&amp;opacket, enc_ctx-&gt;time_base, out_stream-&gt;time_base);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 将编码帧写入输出媒体文件</span><br><span class="line">av_interleaved_write_frame(o_fmt_ctx, &amp;packet);</span><br></pre></td></tr></table></figure>
+
+<h3 id="音频解码"><a href="#音频解码" class="headerlink" title="音频解码"></a>音频解码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">AVFormatContext *ifmt_ctx;</span><br><span class="line">AVStream *in_stream;</span><br><span class="line">AVCodecContext *dec_ctx;</span><br><span class="line">AVPacket packet;</span><br><span class="line">AVFrame *frame;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 从输入文件中读取编码帧</span><br><span class="line">av_read_frame(ifmt_ctx, &amp;packet);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 时间基转换</span><br><span class="line">int raw_audio_time_base &#x3D; av_inv_q(dec_ctx-&gt;sample_rate);</span><br><span class="line">av_packet_rescale_ts(packet, in_stream-&gt;time_base, raw_audio_time_base);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 解码</span><br><span class="line">avcodec_send_packet(dec_ctx, packet)</span><br><span class="line">avcodec_receive_frame(dec_ctx, frame);</span><br></pre></td></tr></table></figure>
+<h3 id="音频编码"><a href="#音频编码" class="headerlink" title="音频编码"></a>音频编码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">AVFormatContext *ofmt_ctx;</span><br><span class="line">AVStream *out_stream;</span><br><span class="line">AVCodecContext *dec_ctx;</span><br><span class="line">AVCodecContext *enc_ctx;</span><br><span class="line">AVPacket packet;</span><br><span class="line">AVFrame *frame;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 编码</span><br><span class="line">avcodec_send_frame(enc_ctx, frame);</span><br><span class="line">avcodec_receive_packet(enc_ctx, packet);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 时间基转换</span><br><span class="line">packet.stream_index &#x3D; out_stream_idx;</span><br><span class="line">enc_ctx-&gt;time_base &#x3D; av_inv_q(dec_ctx-&gt;sample_rate);</span><br><span class="line">av_packet_rescale_ts(&amp;opacket, enc_ctx-&gt;time_base, out_stream-&gt;time_base);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 将编码帧写入输出媒体文件</span><br><span class="line">av_interleaved_write_frame(o_fmt_ctx, &amp;packet);</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/09/Metal/" rel="next" title="Metal">
+                <i class="fa fa-chevron-left"></i> Metal
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">hqz</p>
+              <p class="site-description motion-element" itemprop="description">good good study day day up</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#FFmpeg-学习记录-时间"><span class="nav-number">1.</span> <span class="nav-text">FFmpeg 学习记录 - 时间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#帧"><span class="nav-number">1.1.</span> <span class="nav-text">帧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DTS-PTS"><span class="nav-number">1.2.</span> <span class="nav-text">DTS PTS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ffmpeg-FFmpeg中的时间基与时间戳"><span class="nav-number">1.3.</span> <span class="nav-text">ffmpeg  FFmpeg中的时间基与时间戳</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#时间基与时间戳的概念"><span class="nav-number">1.3.1.</span> <span class="nav-text">时间基与时间戳的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三种时间基tbr、tbn和tbc"><span class="nav-number">1.3.2.</span> <span class="nav-text">三种时间基tbr、tbn和tbc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部时间基AV-TIME-BASE"><span class="nav-number">1.3.3.</span> <span class="nav-text">内部时间基AV_TIME_BASE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时间值形式转换"><span class="nav-number">1.3.4.</span> <span class="nav-text">时间值形式转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时间基转换函数"><span class="nav-number">1.3.5.</span> <span class="nav-text">时间基转换函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转封装过程中的时间基转换"><span class="nav-number">1.3.6.</span> <span class="nav-text">转封装过程中的时间基转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#转码过程中的时间基转换"><span class="nav-number">1.4.</span> <span class="nav-text">转码过程中的时间基转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#视频解码"><span class="nav-number">1.4.1.</span> <span class="nav-text">视频解码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#视频编码"><span class="nav-number">1.4.2.</span> <span class="nav-text">视频编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#音频解码"><span class="nav-number">1.4.3.</span> <span class="nav-text">音频解码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#音频编码"><span class="nav-number">1.4.4.</span> <span class="nav-text">音频编码</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">hqz</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

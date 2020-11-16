@@ -85,12 +85,12 @@
 <meta property="og:url" content="http://yoursite.com/2019/09/14/block/index.html">
 <meta property="og:site_name" content="Hqz_Blog">
 <meta property="og:description" content="iOS Block的理解本文内容主要参考https:&#x2F;&#x2F;www.jianshu.com&#x2F;p&#x2F;1ded480028ff Clang什么是Clang? Clang是C++编写的编译器。我们平常用代码写的任何程序，最终都会经过编译器转换成二进制代码。而Clang 则是支持 C++&#x2F;Objective-C&#x2F;Objective-C++的编译器。我们在做OC开发时，可能也会听说LLVM编译器，那么Clang和">
-<meta property="og:image" content="http://yoursite.com/2019/09/14/block/block/Clang_LLVM.png">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/Clang_LLVM.png">
 <meta property="article:published_time" content="2019-09-14T13:50:48.000Z">
-<meta property="article:modified_time" content="2019-11-15T12:52:19.000Z">
+<meta property="article:modified_time" content="2020-11-16T15:01:00.134Z">
 <meta property="article:author" content="hqz">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2019/09/14/block/block/Clang_LLVM.png">
+<meta name="twitter:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/Clang_LLVM.png">
 
 
 
@@ -302,7 +302,7 @@
       
         <h1 id="iOS-Block的理解"><a href="#iOS-Block的理解" class="headerlink" title="iOS Block的理解"></a>iOS Block的理解</h1><p>本文内容主要参考<a href="https://www.jianshu.com/p/1ded480028ff" target="_blank" rel="noopener">https://www.jianshu.com/p/1ded480028ff</a></p>
 <h2 id="Clang"><a href="#Clang" class="headerlink" title="Clang"></a>Clang</h2><p>什么是Clang? Clang是C++编写的编译器。我们平常用代码写的任何程序，最终都会经过编译器转换成二进制代码。而Clang 则是支持 C++/Objective-C/Objective-C++的编译器。我们在做OC开发时，可能也会听说LLVM编译器，那么Clang和LLVM之间是什么关系呢？ </p>
-<p><img src="block/Clang_LLVM.png" alt="Clang"></p>
+<p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/Clang_LLVM.png" alt="Clang"></p>
 <p>Clang是编译器的前端，它会分析具体的编程语言，然后用于生成与机器无关的中间代码，而LLVM是编译器的后端，与具体的编程语言无关，而会分析具体的中间代码，最后生成符合对应的机器目标程序。</p>
 <p>这样拆分前端后端的好处在于，前后端可以独立替换，便于编译器的优化。  </p>
 <h2 id="Block的本质"><a href="#Block的本质" class="headerlink" title="Block的本质"></a>Block的本质</h2><p> 下面是一个最简单的block</p>
@@ -353,7 +353,7 @@
 <h3 id="全局变量-静态变量-常量"><a href="#全局变量-静态变量-常量" class="headerlink" title="全局变量 静态变量 常量"></a>全局变量 静态变量 常量</h3> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static int a &#x3D; 13;</span><br><span class="line">@implementation ViewController</span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">[super viewDidLoad];</span><br><span class="line">NSLog(@&quot;Outside Block, static int a address is %p&quot;, &amp;a);</span><br><span class="line">^&#123;</span><br><span class="line">NSLog(@&quot;Inside Block, static int a address is %p&quot;, &amp;a);</span><br><span class="line">&#125;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p> 输出结果为</p>
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Outside Block, static int a address is 0x100e61104</span><br><span class="line">Inside Block, static int a address is 0x100e61104</span><br></pre></td></tr></table></figure>
- <font color=red>
+ <font color="red">
  结果显示变量的内存地址一样 block会持有静态变量的内存地址 。注意： 此处的block为NSGlobalBlock 全局block
  </font>
 
@@ -363,7 +363,7 @@
 
 <p> 输出结果为</p>
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Outside Block, address of int b is 0x7ffee191a4ec</span><br><span class="line">Inside Block, address of int b is 0x7ffee191a4e8</span><br></pre></td></tr></table></figure>
- <font color=red>
+ <font color="red">
  结果显示内存地址不一致，也就是说，基本数据类型会在Blcok中copy一份 block 里面跟外面完全是两个不同的变量
  </font>
 
@@ -373,7 +373,7 @@
 <p> 输出结果如下</p>
  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Instance pointer address is 0x7ffee4562498, Instance address is 0x600001626650</span><br><span class="line">Instance pointer address is 0x7ffee4562478, Instance address is 0x600001626650</span><br></pre></td></tr></table></figure>
 
- <font color=red>
+ <font color="red">
  结果显示 指针不一样 但内存地址是一样的 。 所以当block截取到对象类型时只是浅拷贝 以及对象前面的所有权修饰符一同拷贝
  </font>
 
@@ -387,7 +387,7 @@
 
 
 
- <font color=red>
+ <font color="red">
  结果显示 ： 后面两次的打印的内存地址一样而且跟第一次的打印不同 。说明经过block 之后做了特殊的处理。
  </font>
 
@@ -525,7 +525,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

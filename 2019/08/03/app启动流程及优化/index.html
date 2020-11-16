@@ -85,12 +85,12 @@
 <meta property="og:url" content="http://yoursite.com/2019/08/03/app%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%BC%98%E5%8C%96/index.html">
 <meta property="og:site_name" content="Hqz_Blog">
 <meta property="og:description" content="APP 启动流程APP的启动阶段pre-main 1 加载info.plist 文件 （包括APP信息，开屏信息，获取用户的私有权限信息）   2 加载Mach-O可执行文ach-O件（APP的程序和APP内部的静态库编译链接之后的可执行文件）   3 从Mach-O里面获得dyld(Dynamic loader)的路径，然后加载dyld，dyld去初始化运行环境    4 Dyld 加载应用所需">
-<meta property="og:image" content="http://yoursite.com/2019/08/03/app%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%BC%98%E5%8C%96/app%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%BC%98%E5%8C%96/lunch.png">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/lunch.png">
 <meta property="article:published_time" content="2019-08-03T13:38:49.000Z">
-<meta property="article:modified_time" content="2019-10-08T13:46:59.000Z">
+<meta property="article:modified_time" content="2020-11-16T14:54:02.481Z">
 <meta property="article:author" content="hqz">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2019/08/03/app%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%BC%98%E5%8C%96/app%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%BC%98%E5%8C%96/lunch.png">
+<meta name="twitter:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/lunch.png">
 
 
 
@@ -331,7 +331,7 @@
 <p>4 删除没用的静态变量 </p>
 <p>4 尽量减少category的使用 ，删除没用的方法</p>
 <p>5 尽量减小图片资源的大小，应为在图片加载时会进行IO操作。</p>
-<p><img src="app%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E5%8F%8A%E4%BC%98%E5%8C%96/lunch.png" alt="dasdcjkjnvkjasdn"></p>
+<p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/lunch.png" alt="dasdcjkjnvkjasdn"></p>
 <h2 id="APP的初始化阶段"><a href="#APP的初始化阶段" class="headerlink" title="APP的初始化阶段"></a>APP的初始化阶段</h2><h3 id="程序进入main函数"><a href="#程序进入main函数" class="headerlink" title="程序进入main函数"></a>程序进入main函数</h3><p>1 创建UIApplication<br>2 创建mainRunloop<br>3 进入AppDelegate  didFinishLaunch<br>4 进入首页 </p>
 <h3 id="优化方案-1"><a href="#优化方案-1" class="headerlink" title="优化方案"></a>优化方案</h3><p>1 开屏尽量使用图片资源<br>2 didFinishLaunch 之后一般会有很多的初始化第三方和业务逻辑 。能懒加载的就懒加载，能放后台初始化的就放后台，能够延时初始化的就延时，尽量不要卡主线程的启动时间<br>3 使用纯代码而不是xib或者storyboard来进行UI框架的搭建，尤其是主UI框架比如TabBarController这种，尽量避免使用xib和storyboard，因为xib和storyboard也还是要解析成代码来渲染页面，多了一些步骤；</p>
 
@@ -447,7 +447,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">24</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

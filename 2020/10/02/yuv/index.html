@@ -79,19 +79,23 @@
 
 
 
-<meta name="description" content="Charles 使用说明 charles作为客户端与服务端的一个中间代理 即充当客户端的服务器 充当服务端的客户端 在同一个局域网之下设置客户端的代理为charles ip地址和端口号 一般情况下客户端发起请求经过charles代理 再有charles跟服务器交互  服务器端返回经过charles 再有charles到客户端  iOS SSL证书配置 设置好客户端代理之后 在fafari 输入 c">
+<meta name="description" content="视频YUV  yuv 每一种分量的图片的体现     planar 每个分量会分贝存储 音频（每个通道一个分量）视频（每个色彩是是一个分量yuv各占一个分量 ） 提取YUV 数据ffmpeg -i mam.mp4 -an -c:v rawvideo -pix_fmt yuv420p out.yuv 播放YUV数据ffplay -pix_fmt yuv420p -s 576x434 -i mama.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Charles">
-<meta property="og:url" content="http://yoursite.com/2018/12/12/Charles/index.html">
+<meta property="og:title" content="yuv">
+<meta property="og:url" content="http://yoursite.com/2020/10/02/yuv/index.html">
 <meta property="og:site_name" content="Hqz_Blog">
-<meta property="og:description" content="Charles 使用说明 charles作为客户端与服务端的一个中间代理 即充当客户端的服务器 充当服务端的客户端 在同一个局域网之下设置客户端的代理为charles ip地址和端口号 一般情况下客户端发起请求经过charles代理 再有charles跟服务器交互  服务器端返回经过charles 再有charles到客户端  iOS SSL证书配置 设置好客户端代理之后 在fafari 输入 c">
-<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/df49d7292f49c08.png">
-<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/4eff656b23a6e64b.png">
-<meta property="article:published_time" content="2018-12-12T13:11:59.000Z">
-<meta property="article:modified_time" content="2020-11-16T14:49:36.370Z">
+<meta property="og:description" content="视频YUV  yuv 每一种分量的图片的体现     planar 每个分量会分贝存储 音频（每个通道一个分量）视频（每个色彩是是一个分量yuv各占一个分量 ） 提取YUV 数据ffmpeg -i mam.mp4 -an -c:v rawvideo -pix_fmt yuv420p out.yuv 播放YUV数据ffplay -pix_fmt yuv420p -s 576x434 -i mama.">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/screen_target.png">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/yuc_cacaulate.png">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/yuv_data_display.png">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/rgb_tp_yuv.png">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/yuv_data_struct.png">
+<meta property="og:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/yuv_format.png">
+<meta property="article:published_time" content="2020-10-02T15:34:54.000Z">
+<meta property="article:modified_time" content="2020-11-17T15:35:45.100Z">
 <meta property="article:author" content="hqz">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/df49d7292f49c08.png">
+<meta name="twitter:image" content="http://qjvh1x5u9.hb-bkt.clouddn.com/screen_target.png">
 
 
 
@@ -121,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/12/12/Charles/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/10/02/yuv/"/>
 
 
 
 
 
-  <title>Charles | Hqz_Blog</title>
+  <title>yuv | Hqz_Blog</title>
   
 
 
@@ -234,7 +238,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/12/Charles/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/10/02/yuv/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="hqz">
@@ -251,7 +255,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Charles</h1>
+          <h1 class="post-title" itemprop="name headline">yuv</h1>
         
 
         <div class="post-meta">
@@ -263,8 +267,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-12T21:11:59+08:00">
-                2018-12-12
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-02T23:34:54+08:00">
+                2020-10-02
               </time>
             
 
@@ -301,29 +305,27 @@
       
 
       
-        <h2 id="Charles-使用说明"><a href="#Charles-使用说明" class="headerlink" title="Charles 使用说明"></a>Charles 使用说明</h2><ul>
-<li>charles作为客户端与服务端的一个中间代理 即充当客户端的服务器 充当服务端的客户端</li>
-<li>在同一个局域网之下设置客户端的代理为charles ip地址和端口号</li>
-<li>一般情况下客户端发起请求经过charles代理 再有charles跟服务器交互 </li>
-<li>服务器端返回经过charles 再有charles到客户端</li>
+        <h3 id="视频YUV"><a href="#视频YUV" class="headerlink" title="视频YUV"></a>视频YUV</h3><p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/screen_target.png" alt="截屏2020-10-23 上午9.36.13"></p>
+<p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/yuc_cacaulate.png" alt="截屏2020-10-25 上午12.28.56"></p>
+<h3 id="yuv-每一种分量的图片的体现"><a href="#yuv-每一种分量的图片的体现" class="headerlink" title="yuv 每一种分量的图片的体现"></a>yuv 每一种分量的图片的体现</h3><p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/yuv_data_display.png" alt="截屏2020-10-25 上午12.21.24"></p>
+<p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/rgb_tp_yuv.png" alt="截屏2020-10-25 上午12.30.36"></p>
+<p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/yuv_data_struct.png" alt="截屏2020-10-25 上午12.30.12"></p>
+<p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/yuv_format.png" alt="截屏2020-10-24 下午6.08.17"></p>
+<p> planar 每个分量会分贝存储 音频（每个通道一个分量）视频（每个色彩是是一个分量yuv各占一个分量 ）</p>
+<h3 id="提取YUV-数据"><a href="#提取YUV-数据" class="headerlink" title="提取YUV 数据"></a>提取YUV 数据</h3><p>ffmpeg -i mam.mp4 -an -c:v rawvideo -pix_fmt yuv420p out.yuv</p>
+<h3 id="播放YUV数据"><a href="#播放YUV数据" class="headerlink" title="播放YUV数据"></a>播放YUV数据</h3><p>ffplay -pix_fmt yuv420p -s 576x434 -i mama.yuv</p>
+<h3 id="只播放YUV中的Y分量"><a href="#只播放YUV中的Y分量" class="headerlink" title="只播放YUV中的Y分量"></a>只播放YUV中的Y分量</h3><ul>
+<li><p>-vf 表示 简单滤波器 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ffplay -pix_fmt yuv420p -s 576X434 -vf extractplanes&#x3D;&#39;y&#39; -i mama.yuv</span><br><span class="line">ffplay -pix_fmt yuv420p -s 576X434 -vf extractplanes&#x3D;&#39;u&#39; -i mama.yuv</span><br><span class="line">ffplay -pix_fmt yuv420p -s 576X434 -vf extractplanes&#x3D;&#39;v&#39; -i mama.yuv</span><br></pre></td></tr></table></figure>
+
+</li>
 </ul>
-<h2 id="iOS-SSL证书配置"><a href="#iOS-SSL证书配置" class="headerlink" title="iOS SSL证书配置"></a>iOS SSL证书配置</h2><ul>
-<li>设置好客户端代理之后 在fafari 输入 chal.pro/lls  安装证书, 安装之后  还需要信任    设置 -&gt; 通用 -&gt;  关于本机  -&gt; 证书信任设置 </li>
-<li>在设置里面信任证书 这样可以充当客户端的CA证书 保证验证通过 </li>
-<li>Mac下安装SSL证书  help -&gt; SSL Proxying -&gt; install Charles Root Certificates  这样可以充当服务端的CA证书 </li>
-<li>在钥匙串中双击 SSL 信任 最后保存<br><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/df49d7292f49c08.png"></li>
-</ul>
-<h2 id="如果HTTPS客户算没有SSL验证-可以避免乱码"><a href="#如果HTTPS客户算没有SSL验证-可以避免乱码" class="headerlink" title="如果HTTPS客户算没有SSL验证 可以避免乱码"></a>如果HTTPS客户算没有SSL验证 可以避免乱码</h2><ul>
-<li>上方菜单栏 —-&gt; Proxy —-&gt; SSL Proxy Settings —-&gt; Add </li>
-<li>Host：填*表示所有网站都抓 </li>
-<li>Port：443 </li>
-</ul>
-<p><img src="http://qjvh1x5u9.hb-bkt.clouddn.com/4eff656b23a6e64b.png" alt="wqe"></p>
-<h2 id="自定义客户端请求的数据"><a href="#自定义客户端请求的数据" class="headerlink" title="自定义客户端请求的数据"></a>自定义客户端请求的数据</h2><ul>
-<li>右键单击 Structure -&gt; Map location </li>
-<li>可以指定自定义的数据文件 </li>
-<li>下次请求可获取到自定义的数据文件 </li>
-</ul>
+<h3 id="提取YUV-的各个分量-filter-complex-复杂滤波器"><a href="#提取YUV-的各个分量-filter-complex-复杂滤波器" class="headerlink" title="提取YUV 的各个分量  -filter_complex  复杂滤波器"></a>提取YUV 的各个分量  -filter_complex  复杂滤波器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-map :多个输出</span><br><span class="line">[y] : 对输出文件的一种标记 </span><br><span class="line">ffmpeg -i mama.mp4 -an -filter_complex &quot;extractplanes &#x3D; y+u+v[y][u][v]&quot; -map &quot;[y]&quot; y.yuv -map &quot;[u]&quot; u.yuv -map &quot;[v]&quot; v.yuv </span><br><span class="line">&#x2F;&#x2F;&#x2F;播放各个分量</span><br><span class="line">y: fplay -pix_fmt gray -s 576x343  -i y.yuv</span><br><span class="line">&#x2F;&#x2F;&#x2F; 播放u v 分量时 分辨率需减半  yuv420p </span><br><span class="line">u: fplay -pix_fmt gray -s 288x217  -i u.yuv</span><br><span class="line">v: fplay -pix_fmt gray -s 288x217  -i v.yuv</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="yuv数据计算"><a href="#yuv数据计算" class="headerlink" title="yuv数据计算"></a>yuv数据计算</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">分辨率: 640x480 </span><br><span class="line">如果是yuv4:4:4 则每帧数据大小为 640x480x3</span><br><span class="line">如果是yuv4:2:2 则每帧数据大小为 640x480x2</span><br><span class="line">如果是yuv4:2:0 则每帧数据大小为 640x480x1.5</span><br></pre></td></tr></table></figure>
+
+
 
       
     </div>
@@ -348,8 +350,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/11/02/memorymanager/" rel="next" title="iOS 内存管理的理解">
-                <i class="fa fa-chevron-left"></i> iOS 内存管理的理解
+              <a href="/2020/09/18/h264/" rel="next" title="h264">
+                <i class="fa fa-chevron-left"></i> h264
               </a>
             
           </div>
@@ -357,10 +359,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/01/09/classStruct/" rel="prev" title="iOS runtime">
-                iOS runtime <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -483,7 +481,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Charles-使用说明"><span class="nav-number">1.</span> <span class="nav-text">Charles 使用说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS-SSL证书配置"><span class="nav-number">2.</span> <span class="nav-text">iOS SSL证书配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如果HTTPS客户算没有SSL验证-可以避免乱码"><span class="nav-number">3.</span> <span class="nav-text">如果HTTPS客户算没有SSL验证 可以避免乱码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义客户端请求的数据"><span class="nav-number">4.</span> <span class="nav-text">自定义客户端请求的数据</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#视频YUV"><span class="nav-number">1.</span> <span class="nav-text">视频YUV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yuv-每一种分量的图片的体现"><span class="nav-number">2.</span> <span class="nav-text">yuv 每一种分量的图片的体现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提取YUV-数据"><span class="nav-number">3.</span> <span class="nav-text">提取YUV 数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#播放YUV数据"><span class="nav-number">4.</span> <span class="nav-text">播放YUV数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#只播放YUV中的Y分量"><span class="nav-number">5.</span> <span class="nav-text">只播放YUV中的Y分量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提取YUV-的各个分量-filter-complex-复杂滤波器"><span class="nav-number">6.</span> <span class="nav-text">提取YUV 的各个分量  -filter_complex  复杂滤波器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yuv数据计算"><span class="nav-number">7.</span> <span class="nav-text">yuv数据计算</span></a></li></ol></div>
             
 
           </div>

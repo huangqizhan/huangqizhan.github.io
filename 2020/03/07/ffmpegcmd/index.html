@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Hqz_Blog">
 <meta property="og:description" content="ffplay 命令收集1ffplay  [参数部分]  [输入部分]  一般的参数1234567891011121314151617181920212223242526&quot;-x 100&quot;       强制以宽度100 高度自适应播放 &quot;-y 100 &quot;      强制以高度100 宽度自使用播放&quot;-an&quot;          禁止音频 &amp;qu">
 <meta property="article:published_time" content="2020-03-07T05:07:35.000Z">
-<meta property="article:modified_time" content="2020-03-12T10:47:35.346Z">
+<meta property="article:modified_time" content="2021-02-20T13:53:02.228Z">
 <meta property="article:author" content="hqz">
 <meta name="twitter:card" content="summary">
 
@@ -321,7 +321,7 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">7.将直播媒体保存至本地文件</span><br><span class="line"></span><br><span class="line">ffmpeg -i rtmp:&#x2F;&#x2F;server&#x2F;live&#x2F;streamName -c copy dump.flv</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">8. 亮度修改 </span><br><span class="line">huangqizhandeMacBook-Pro:vv huangqizhan$ ffmpeg -i dc.mp4 -c:v libx264 -b:v 800k -c:a copy  -vf eq&#x3D;brightness&#x3D;0.25 -f mp4 ou.mp4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">8. 亮度修改 </span><br><span class="line"> ffmpeg -i dc.mp4 -c:v libx264 -b:v 800k -c:a copy  -vf eq&#x3D;brightness&#x3D;0.25 -f mp4 ou.mp4</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">9. 以json 文件格式查看媒体packet信息</span><br><span class="line">ffprobe -show_packets -of json -i &#x2F;Users&#x2F;huangqizhan&#x2F;Desktop&#x2F;music&#x2F;xxx.mp3  &gt; &#x2F;Users&#x2F;huangqizhan&#x2F;Desktop&#x2F;packet.json</span><br></pre></td></tr></table></figure>
 
